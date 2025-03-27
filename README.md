@@ -11,7 +11,7 @@ Hardhat plugin that manages:
 Ordered Tasks
 
 - [ ] Mocks
-  - [ ] Import `fhenixprotocol/cofhe-mock-contracts`
+  - [x] Import `fhenixprotocol/cofhe-mock-contracts`
   - [ ] Get mock injection working in tasks
   - [ ] Write tests for the mock injections
   - [ ] Create utilities necessary to interact with CoFHE
