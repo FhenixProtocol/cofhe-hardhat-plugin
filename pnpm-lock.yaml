@@ -8,15 +8,24 @@ importers:
 
   .:
     dependencies:
+      '@fhenixprotocol/cofhe-contracts':
+        specifier: 0.0.13
+        version: 0.0.13
+      '@fhenixprotocol/cofhe-mock-contracts':
+        specifier: file:../cofhe-mock-contracts/contracts
+        version: file:../cofhe-mock-contracts/contracts(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)
+      '@openzeppelin/contracts':
+        specifier: ^5.0.0
+        version: 5.2.0
+      '@openzeppelin/contracts-upgradeable':
+        specifier: ^5.0.0
+        version: 5.2.0(@openzeppelin/contracts@5.2.0)
       axios:
         specifier: ^1.6.5
         version: 1.6.5
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
-      cofhe-mock-contracts:
-        specifier: file:../cofhe-mock-contracts
-        version: '@fhenixprotocol/cofhe-mock-contracts@file:../cofhe-mock-contracts'
       ethers:
         specifier: ^6.10.0
         version: 6.10.0
@@ -214,8 +223,12 @@ packages:
   '@fhenixprotocol/cofhe-contracts@0.0.13':
     resolution: {integrity: sha512-+lHo5v52fR7QfQj2ottDw4F/AqZg6obPBRqvK576SJatX3o4aH6ZSt2kxNb5kT8Ckthjw6FoNmLdUVCDpP400w==}
 
-  '@fhenixprotocol/cofhe-mock-contracts@file:../cofhe-mock-contracts':
-    resolution: {directory: ../cofhe-mock-contracts, type: directory}
+  '@fhenixprotocol/cofhe-mock-contracts@file:../cofhe-mock-contracts/contracts':
+    resolution: {directory: ../cofhe-mock-contracts/contracts, type: directory}
+    peerDependencies:
+      '@fhenixprotocol/cofhe-contracts': 0.0.13
+      '@openzeppelin/contracts': ^5.0.0
+      '@openzeppelin/contracts-upgradeable': ^5.0.0
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==}
@@ -2073,12 +2086,11 @@ snapshots:
     dependencies:
       '@openzeppelin/contracts': 5.2.0
 
-  '@fhenixprotocol/cofhe-mock-contracts@file:../cofhe-mock-contracts':
+  '@fhenixprotocol/cofhe-mock-contracts@file:../cofhe-mock-contracts/contracts(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)':
     dependencies:
       '@fhenixprotocol/cofhe-contracts': 0.0.13
       '@openzeppelin/contracts': 5.2.0
       '@openzeppelin/contracts-upgradeable': 5.2.0(@openzeppelin/contracts@5.2.0)
-      chalk: 4.1.2
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:

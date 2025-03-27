@@ -5,6 +5,8 @@ import { HttpNetworkConfig, HttpNetworkHDAccountsConfig } from "hardhat/types";
 
 import { getFunds } from "./common";
 import { TASK_COFHE_USE_FAUCET } from "./const";
+import { deployMocks } from "./deploy-mocks";
+import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
 
 extendConfig((config, userConfig) => {
   // Allow users to override the localcofhe network config
@@ -116,3 +118,17 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the faucet")
       );
     }
   });
+
+task(
+  "deploy-mocks",
+  "Deploys the mock contracts on the Hardhat network",
+).setAction(async (taskArgs, hre) => {
+  await deployMocks(hre);
+});
+
+task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
+  async ({}, hre, runSuper) => {
+    await deployMocks(hre);
+    return runSuper();
+  },
+);

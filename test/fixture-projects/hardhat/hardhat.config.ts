@@ -2,11 +2,17 @@
 import { HardhatUserConfig } from "hardhat/types";
 import "@nomicfoundation/hardhat-ethers";
 
-import "../../../src/index";
+import "../../../src";
 
 const config: HardhatUserConfig = {
-  solidity: "0.7.3",
+  solidity: {
+    version: "0.8.25",
+    settings: {
+      evmVersion: "cancun",
+    },
+  },
   defaultNetwork: "hardhat",
+
   paths: {
     // newPath: "asd",
   },

@@ -4,7 +4,7 @@ Hardhat plugin that manages:
 
 - [ ] Localcofhe containers startup before tests and teardown after tests
 - [ ] Tasks that can up / down localcofhe
-- [ ] Injects Hardhat Cofhe Mocks (@fhenixprotocol/cofhe-mock-contracts)
+- [x] Injects Hardhat Cofhe Mocks (@fhenixprotocol/cofhe-mock-contracts)
 - [ ] Faucet task (localcofhe host chain)
 - [ ] Provides utilities for testing with CoFHE
 
@@ -12,8 +12,9 @@ Ordered Tasks
 
 - [ ] Mocks
   - [x] Import `fhenixprotocol/cofhe-mock-contracts`
-  - [ ] Get mock injection working in tasks
-  - [ ] Write tests for the mock injections
+  - [x] Fix `cofhe-mock-contracts` build (add vite build)
+  - [x] Get mock injection working in tasks
+  - [x] Write tests for the mock injections
   - [ ] Create utilities necessary to interact with CoFHE
   - [ ] Import `fhenixprotocol/cofhejs`
   - [ ] Create `initializeWithHardhatSigner` utility function for `cofhejs`

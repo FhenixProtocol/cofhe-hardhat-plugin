@@ -53,7 +53,10 @@
     "chalk": "^4.1.2",
     "ethers": "^6.10.0",
     "fast-glob": "^3.3.2",
-    "cofhe-mock-contracts": "file:../cofhe-mock-contracts"
+    "@fhenixprotocol/cofhe-mock-contracts": "file:../cofhe-mock-contracts/contracts",
+    "@fhenixprotocol/cofhe-contracts": "0.0.13",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0"
   },
   "peerDependencies": {
     "hardhat": "^2.11.0"

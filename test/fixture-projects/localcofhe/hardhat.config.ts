@@ -2,10 +2,15 @@
 import { HardhatUserConfig } from "hardhat/types";
 import "@nomicfoundation/hardhat-ethers";
 
-import "../../../src/index";
+import "../../../src";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.20",
+  solidity: {
+    version: "0.8.25",
+    settings: {
+      evmVersion: "cancun",
+    },
+  },
   defaultNetwork: "localfhenix",
   networks: {
     localfhenix: {

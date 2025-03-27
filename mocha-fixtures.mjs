@@ -62,28 +62,22 @@ async function waitForChainToStart(url) {
 }
 
 export async function mochaGlobalSetup() {
-  if (process.env.SKIP_LOCAL_ENV === "true") {
-    return;
-  }
-
-  runDockerContainerAsync();
-
-  console.log("\nWaiting for Fhenix to start...");
-
-  await waitForChainToStart(TEST_ENDPOINT_URL);
-
-  console.log("Fhenix is running!");
+  // if (process.env.SKIP_LOCAL_ENV === "true") {
+  //   return;
+  // }
+  // runDockerContainerAsync();
+  // console.log("\nWaiting for Fhenix to start...");
+  // await waitForChainToStart(TEST_ENDPOINT_URL);
+  // console.log("Fhenix is running!");
 }
 
 // this is a cjs because jest sucks at typescript
 
 export async function mochaGlobalTeardown() {
-  if (process.env.SKIP_LOCAL_ENV === "true") {
-    return;
-  }
-  console.log("\nWaiting for Fhenix to stop...");
-
-  await killDockerContainerAsync();
-
-  console.log("Stopped test container. Goodbye!");
+  // if (process.env.SKIP_LOCAL_ENV === "true") {
+  //   return;
+  // }
+  // console.log("\nWaiting for Fhenix to stop...");
+  // await killDockerContainerAsync();
+  // console.log("Stopped test container. Goodbye!");
 }
