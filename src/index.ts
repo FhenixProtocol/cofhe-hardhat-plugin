@@ -52,10 +52,10 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the faucet")
   .setAction(async ({ address, account, url }: UseFaucetArgs, { network }) => {
     const { name: networkName, config: networkConfig } = network;
 
-    if (networkName !== "localfhenix" && !url) {
+    if (networkName !== "localcofhe" && !url) {
       console.info(
         chalk.yellow(
-          `Programmatic faucet only supported for localfhenix. Please provide a faucet url, or use the public testnet faucet at https://faucet.fhenix.zone`,
+          `Programmatic faucet only supported for localcofhe. Please provide a faucet url, or use the public testnet faucet at https://faucet.fhenix.zone`,
         ),
       );
       return;

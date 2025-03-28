@@ -1,8 +1,8 @@
 {
-  "name": "fhenix-hardhat-plugin",
-  "version": "0.3.3-alpha.1",
+  "name": "cofhe-hardhat-plugin",
+  "version": "0.0.1",
   "description": "Hardhat TypeScript plugin boilerplate",
-  "repository": "github:FhenixProtocol/fhenix-hardhat-plugin",
+  "repository": "github:FhenixProtocol/cofhe-hardhat-plugin",
   "author": "Fhe Labs",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -13,7 +13,8 @@
     "hardhat",
     "hardhat-plugin",
     "fhe",
-    "fhenix"
+    "fhenix",
+    "cofhe"
   ],
   "scripts": {
     "lint": "eslint --config ./.eslintrc.json --ignore-path ./.eslintignore ./**/*.ts",
