@@ -10,7 +10,7 @@ Hardhat plugin that manages:
 
 Ordered Tasks
 
-- [ ] Mocks
+- [ ] Mocks (ROGUE)
   - [x] Import `fhenixprotocol/cofhe-mock-contracts`
   - [x] Fix `cofhe-mock-contracts` build (add vite build)
   - [x] Get mock injection working in tasks
@@ -21,17 +21,18 @@ Ordered Tasks
   - [ ] Test `cofhejs.encrypt` against `cofhe-mock-contracts`
   - [ ] Test `cofhejs.unseal` against `cofhe-mock-contracts`
   - [ ] Test full `cofhejs` pipeline
-- [ ] Create `fhenixprotocol/cofhe-hardhat-starter` repo
-  - [ ] Import this (`cofhe-hardhat-plugin`)
-  - [ ] Create example contract
+- [x] Create `fhenixprotocol/cofhe-hardhat-starter` repo
+  - [x] Import this (`cofhe-hardhat-plugin`)
+  - [x] Create example contract
   - [ ] Test onramp
-  - [ ] Create example contract tests
+  - [x] Create example contract tests
   - [ ] Deploy (indicate mocks only)
-- [ ] Localcofhe
+- [ ] Localcofhe (TOVI)
   - [ ] Import `fhenixprotocol/localcofhe`
-  - [ ] Create wrapper around starting up localcofhe
-  - [ ] Create wrapper around tearing down localcofhe
-  - [ ] Update localfhenix start/stop tasks with localcofhe
+  - [ ] Automation: starting up localcofhe
+  - [ ] Automation: tearing down localcofhe
+  - [ ] Automation: Update localfhenix start/stop tasks with localcofhe
+  - [ ] Update faucet to work with localcofhe
   - [ ] Test `cofhejs.encrypt` against localcofhe
   - [ ] Test `cofhejs.unseal` against localcofhe
   - [ ] Test full `cofhejs` pipeline
@@ -41,3 +42,16 @@ Ordered Tasks
   - [ ] Create tests against localcofhe
 - [ ] Arbitrum Sepolia
   - [ ] Research
+
+Test Matrix
+
+```
++------------------+-------+------------+-------------+
+|        _         | Mocks | Localcofhe | Arb-Sepolia |
++------------------+-------+------------+-------------+
+| zkPoK            | [ ]   | [ ]        | [ ]         |
+| Ops              | [ ]   | [ ]        | [ ]         |
+| On-chain decrypt | [ ]   | [ ]        | [ ]         |
+| Query sealoutput | [ ]   | [ ]        | [ ]         |
++------------------+-------+------------+-------------+
+```

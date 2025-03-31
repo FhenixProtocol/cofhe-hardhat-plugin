@@ -62,6 +62,11 @@ async function waitForChainToStart(url) {
 }
 
 export async function mochaGlobalSetup() {
+  // TODO: This is currently disabled because we don't have a localcofhe container
+  // Once the localcofhe container is ready, we can replace this with the localcofhe startup
+  // Hopefully: `localCofheStart(wait: true)`
+  // - architect 2025-03-31
+  //
   // if (process.env.SKIP_LOCAL_ENV === "true") {
   //   return;
   // }
@@ -74,6 +79,9 @@ export async function mochaGlobalSetup() {
 // this is a cjs because jest sucks at typescript
 
 export async function mochaGlobalTeardown() {
+  // TODO: Add localcofhe teardown
+  // - architect 2025-03-31
+  //
   // if (process.env.SKIP_LOCAL_ENV === "true") {
   //   return;
   // }
