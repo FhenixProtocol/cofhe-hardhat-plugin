@@ -126,5 +126,7 @@ task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
 
 // MOCK UTILS
 
+export * from "./mockUtils";
+
 // TODO: These need to be added after the cofhe-hardhat-example created
 // - architect 2025-03-28

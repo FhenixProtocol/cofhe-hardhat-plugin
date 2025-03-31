@@ -15,7 +15,7 @@ Ordered Tasks
   - [x] Fix `cofhe-mock-contracts` build (add vite build)
   - [x] Get mock injection working in tasks
   - [x] Write tests for the mock injections
-  - [ ] Create utilities necessary to interact with CoFHE
+  - [x] Create utilities necessary to interact with CoFHE
   - [ ] Import `fhenixprotocol/cofhejs`
   - [ ] Create `initializeWithHardhatSigner` utility function for `cofhejs`
   - [ ] Test `cofhejs.encrypt` against `cofhe-mock-contracts`
