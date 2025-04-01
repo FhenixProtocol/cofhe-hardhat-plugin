@@ -50,14 +50,15 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@fhenixprotocol/cofhe-contracts": "0.0.13",
+    "@fhenixprotocol/cofhe-mock-contracts": "file:../cofhe-mock-contracts/contracts",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0",
     "axios": "^1.6.5",
     "chalk": "^4.1.2",
+    "cofhejs": "file:../cofhe.js",
     "ethers": "^6.10.0",
-    "fast-glob": "^3.3.2",
-    "@fhenixprotocol/cofhe-mock-contracts": "file:../cofhe-mock-contracts/contracts",
-    "@fhenixprotocol/cofhe-contracts": "0.0.13",
-    "@openzeppelin/contracts": "^5.0.0",
-    "@openzeppelin/contracts-upgradeable": "^5.0.0"
+    "fast-glob": "^3.3.2"
   },
   "peerDependencies": {
     "hardhat": "^2.11.0"

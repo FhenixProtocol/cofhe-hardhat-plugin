@@ -66,7 +66,14 @@ const setTaskManagerACL = async (taskManager, acl) => {
     const setAclTx = await taskManager.setACLContract(await acl.getAddress());
     await setAclTx.wait();
 };
-const deployMocks = async (hre) => {
+const deployTestBedContract = async (hre) => {
+    const testBedFactory = await hre.artifacts.readArtifact("TestBed");
+    await (0, utils_1.hardhatSetCode)(hre, addresses_1.TEST_BED_ADDRESS, testBedFactory.deployedBytecode);
+    const testBed = await hre.ethers.getContractAt("TestBed", addresses_1.TEST_BED_ADDRESS);
+    await testBed.waitForDeployment();
+    return testBed;
+};
+const deployMocks = async (hre, deployTestBed = false) => {
     // Log start message
     console.log(chalk_1.default.green(chalk_1.default.bold("\ncofhe-hardhat-plugin - deploy mocks \n")));
     // Compile mock contracts
@@ -91,6 +98,11 @@ const deployMocks = async (hre) => {
     console.log(chalk_1.default.green("  ✓ MockZkVerifier deployed:"), "\t\t", chalk_1.default.bold(await zkVerifier.getAddress()));
     const queryDecrypter = await deployMockQueryDecrypter(hre, acl);
     console.log(chalk_1.default.green("  ✓ MockQueryDecrypter deployed:"), "\t", chalk_1.default.bold(await queryDecrypter.getAddress()));
+    if (deployTestBed) {
+        console.log(chalk_1.default.green("  ✓ TestBed deployment enabled"));
+        const testBed = await deployTestBedContract(hre);
+        console.log(chalk_1.default.green("    ✓ TestBed deployed:"), "\t\t", chalk_1.default.bold(await testBed.getAddress()));
+    }
     // Log success message
     console.log(chalk_1.default.green(chalk_1.default.bold("cofhe-hardhat-plugin :: mocks deployed!\n\n")));
 };

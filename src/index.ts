@@ -6,7 +6,7 @@ import { HttpNetworkConfig, HttpNetworkHDAccountsConfig } from "hardhat/types";
 import { getFunds } from "./common";
 import { TASK_COFHE_USE_FAUCET } from "./const";
 import { deployMocks } from "./deploy-mocks";
-import { TASK_TEST } from "hardhat/builtin-tasks/task-names";
+import { TASK_NODE, TASK_TEST } from "hardhat/builtin-tasks/task-names";
 
 extendConfig((config, userConfig) => {
   // Allow users to override the localcofhe network config
@@ -114,12 +114,19 @@ task(
   "deploy-mocks",
   "Deploys the mock contracts on the Hardhat network",
 ).setAction(async (taskArgs, hre) => {
-  await deployMocks(hre);
+  await deployMocks(hre, true);
 });
 
 task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
   async ({}, hre, runSuper) => {
-    await deployMocks(hre);
+    await deployMocks(hre, true);
+    return runSuper();
+  },
+);
+
+task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
+  async ({}, hre, runSuper) => {
+    await deployMocks(hre, true);
     return runSuper();
   },
 );
@@ -127,6 +134,4 @@ task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
 // MOCK UTILS
 
 export * from "./mockUtils";
-
-// TODO: These need to be added after the cofhe-hardhat-example created
-// - architect 2025-03-28
+export * from "./cofhejs";

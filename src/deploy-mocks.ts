@@ -4,6 +4,7 @@ import {
   TASK_MANAGER_ADDRESS,
   ZK_VERIFIER_ADDRESS,
   QUERY_DECRYPTER_ADDRESS,
+  TEST_BED_ADDRESS,
 } from "./addresses";
 import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
@@ -113,7 +114,18 @@ const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
   await setAclTx.wait();
 };
 
-export const deployMocks = async (hre: HardhatRuntimeEnvironment) => {
+const deployTestBedContract = async (hre: HardhatRuntimeEnvironment) => {
+  const testBedFactory = await hre.artifacts.readArtifact("TestBed");
+  await hardhatSetCode(hre, TEST_BED_ADDRESS, testBedFactory.deployedBytecode);
+  const testBed = await hre.ethers.getContractAt("TestBed", TEST_BED_ADDRESS);
+  await testBed.waitForDeployment();
+  return testBed;
+};
+
+export const deployMocks = async (
+  hre: HardhatRuntimeEnvironment,
+  deployTestBed = false,
+) => {
   // Log start message
   console.log(
     chalk.green(chalk.bold("\ncofhe-hardhat-plugin - deploy mocks \n")),
@@ -168,6 +180,16 @@ export const deployMocks = async (hre: HardhatRuntimeEnvironment) => {
     "\t",
     chalk.bold(await queryDecrypter.getAddress()),
   );
+
+  if (deployTestBed) {
+    console.log(chalk.green("  ✓ TestBed deployment enabled"));
+    const testBed = await deployTestBedContract(hre);
+    console.log(
+      chalk.green("    ✓ TestBed deployed:"),
+      "\t\t",
+      chalk.bold(await testBed.getAddress()),
+    );
+  }
 
   // Log success message
   console.log(

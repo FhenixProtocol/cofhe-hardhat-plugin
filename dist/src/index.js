@@ -95,14 +95,17 @@ const task_names_1 = require("hardhat/builtin-tasks/task-names");
     }
 });
 (0, config_1.task)("deploy-mocks", "Deploys the mock contracts on the Hardhat network").setAction(async (taskArgs, hre) => {
-    await (0, deploy_mocks_1.deployMocks)(hre);
+    await (0, deploy_mocks_1.deployMocks)(hre, true);
 });
 (0, config_1.task)(task_names_1.TASK_TEST, "Deploy mock contracts on hardhat").setAction(async ({}, hre, runSuper) => {
-    await (0, deploy_mocks_1.deployMocks)(hre);
+    await (0, deploy_mocks_1.deployMocks)(hre, true);
+    return runSuper();
+});
+(0, config_1.task)(task_names_1.TASK_NODE, "Deploy mock contracts on hardhat").setAction(async ({}, hre, runSuper) => {
+    await (0, deploy_mocks_1.deployMocks)(hre, true);
     return runSuper();
 });
 // MOCK UTILS
 __exportStar(require("./mockUtils"), exports);
-// TODO: These need to be added after the cofhe-hardhat-example created
-// - architect 2025-03-28
+__exportStar(require("./cofhejs"), exports);
 //# sourceMappingURL=index.js.map

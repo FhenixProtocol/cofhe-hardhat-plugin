@@ -9,6 +9,7 @@ const paths = [
   "@fhenixprotocol/cofhe-mock-contracts/MockQueryDecrypter.sol",
   "@fhenixprotocol/cofhe-mock-contracts/MockTaskManager.sol",
   "@fhenixprotocol/cofhe-mock-contracts/MockZkVerifier.sol",
+  "@fhenixprotocol/cofhe-mock-contracts/TestBed.sol",
 ];
 const pluginName = "cofhe-mock-contracts";
 
