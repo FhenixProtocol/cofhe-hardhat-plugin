@@ -9,6 +9,7 @@ import {
 import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
+import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 
 // Logging
 
@@ -25,7 +26,8 @@ const logError = (message: string, indent = 1) => {
 };
 
 const logDeployment = (contractName: string, address: string) => {
-  logSuccess(`${contractName} deployed: ${chalk.bold(address)}`);
+  const paddedName = `${contractName} deployed`.padEnd(36);
+  logSuccess(`${paddedName} ${chalk.bold(address)}`);
 };
 
 // Network Check
@@ -180,10 +182,8 @@ export const deployMocks = async (
 
   // Compile mock contracts
   await compileMockContractPaths(hre);
-  logSuccess("Mock contracts compiled", 2);
-
-  // Compile contracts
-  await hre.run("compile");
+  logEmpty();
+  logSuccess("Mock contracts compiled", 1);
 
   // Deploy mock contracts
   const taskManager = await deployMockTaskManager(hre);
