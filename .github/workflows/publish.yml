@@ -35,12 +35,4 @@ jobs:
           else
             echo "PRERELEASE=" >> $GITHUB_ENV
           fi
-      - run: pnpm run publish ${{ env.PRERELEASE }}
-
-  github-release:
-    needs: [npm-publish]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: softprops/action-gh-release@v1
-        with:
-          generate_release_notes: true
+      - run: pnpm publish --no-git-checks ${{ env.PRERELEASE }}
