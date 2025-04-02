@@ -10,6 +10,37 @@ import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
 
+// Logging
+
+const logEmpty = () => {
+  console.log("");
+};
+
+const logSuccess = (message: string, indent = 1) => {
+  console.log(chalk.green(`${"  ".repeat(indent)}✓ ${message}`));
+};
+
+const logError = (message: string, indent = 1) => {
+  console.log(chalk.red(`${"  ".repeat(indent)}✗ ${message}`));
+};
+
+const logDeployment = (contractName: string, address: string) => {
+  logSuccess(`${contractName} deployed: ${chalk.bold(address)}`);
+};
+
+// Network Check
+
+const checkNetworkAndSkip = async (hre: HardhatRuntimeEnvironment) => {
+  const network = hre.network.name;
+  const isHardhat = network === "hardhat";
+  if (!isHardhat)
+    logSuccess(
+      `cofhe-hardhat-plugin - deploy mocks - skipped on non-hardhat network ${network}`,
+      0,
+    );
+  return isHardhat;
+};
+
 // Deployments
 
 const deployMockTaskManager = async (hre: HardhatRuntimeEnvironment) => {
@@ -52,6 +83,7 @@ const deployMockACL = async (hre: HardhatRuntimeEnvironment) => {
   // Check if ACL exists
   const exists = await acl.exists();
   if (!exists) {
+    logError("ACL does not exist", 2);
     throw new Error("ACL does not exist");
   }
 
@@ -72,6 +104,7 @@ const deployMockZkVerifier = async (hre: HardhatRuntimeEnvironment) => {
 
   const zkVerifierExists = await zkVerifier.exists();
   if (!zkVerifierExists) {
+    logError("MockZkVerifier does not exist", 2);
     throw new Error("MockZkVerifier does not exist");
   }
 
@@ -105,6 +138,7 @@ const deployMockQueryDecrypter = async (
   // Check if MockQueryDecrypter exists
   const queryDecrypterExists = await queryDecrypter.exists();
   if (!queryDecrypterExists) {
+    logError("MockQueryDecrypter does not exist", 2);
     throw new Error("MockQueryDecrypter does not exist");
   }
 
@@ -135,79 +169,55 @@ export const deployMocks = async (
   hre: HardhatRuntimeEnvironment,
   deployTestBed = false,
 ) => {
+  // Check if network is Hardhat, if not log skip message and return
+  const isHardhat = await checkNetworkAndSkip(hre);
+  if (!isHardhat) return;
+
   // Log start message
-  console.log(
-    chalk.green(chalk.bold("\ncofhe-hardhat-plugin - deploy mocks \n")),
-  );
+  logEmpty();
+  logSuccess(chalk.bold("cofhe-hardhat-plugin - deploy mocks"), 0);
+  logEmpty();
 
   // Compile mock contracts
   await compileMockContractPaths(hre);
-  console.log(chalk.green("    ✓ Mock contracts compiled"));
-
-  // Check if network is Hardhat
-  const network = hre.network.name;
-  if (network !== "hardhat") {
-    console.log(
-      chalk.red(
-        `cofhe-hardhat-plugin - deploy mocks\nThis task is intended to run on the Hardhat network.\nCurrent network: ${network}`,
-      ),
-    );
-    return;
-  }
+  logSuccess("Mock contracts compiled", 2);
 
   // Compile contracts
   await hre.run("compile");
 
   // Deploy mock contracts
   const taskManager = await deployMockTaskManager(hre);
-  console.log(
-    chalk.green("  ✓ MockTaskManager deployed:"),
-    "\t\t",
-    chalk.bold(await taskManager.getAddress()),
-  );
+  logDeployment("MockTaskManager", await taskManager.getAddress());
 
   const logOps = true;
   if (logOps) {
     await setTaskManagerLogOps(taskManager, true);
-    console.log(chalk.green("    ✓ TaskManager logOps set"));
+    logSuccess("TaskManager logOps set", 2);
   }
 
   const acl = await deployMockACL(hre);
-  console.log(
-    chalk.green("  ✓ MockACL deployed:"),
-    "\t\t\t",
-    chalk.bold(await acl.getAddress()),
-  );
+  logDeployment("MockACL", await acl.getAddress());
 
   await setTaskManagerACL(taskManager, acl);
-  console.log(chalk.green("    ✓ ACL address set in TaskManager"));
+  logSuccess("ACL address set in TaskManager", 2);
 
   const zkVerifier = await deployMockZkVerifier(hre);
-  console.log(
-    chalk.green("  ✓ MockZkVerifier deployed:"),
-    "\t\t",
-    chalk.bold(await zkVerifier.getAddress()),
-  );
+  logDeployment("MockZkVerifier", await zkVerifier.getAddress());
 
   const queryDecrypter = await deployMockQueryDecrypter(hre, acl);
-  console.log(
-    chalk.green("  ✓ MockQueryDecrypter deployed:"),
-    "\t",
-    chalk.bold(await queryDecrypter.getAddress()),
-  );
+  logDeployment("MockQueryDecrypter", await queryDecrypter.getAddress());
 
   if (deployTestBed) {
-    console.log(chalk.green("  ✓ TestBed deployment enabled"));
+    logSuccess("TestBed deployment enabled", 2);
     const testBed = await deployTestBedContract(hre);
-    console.log(
-      chalk.green("    ✓ TestBed deployed:"),
-      "\t\t",
-      chalk.bold(await testBed.getAddress()),
-    );
+    logDeployment("TestBed", await testBed.getAddress());
   }
 
   // Log success message
-  console.log(
-    chalk.green(chalk.bold("cofhe-hardhat-plugin :: mocks deployed!\n\n")),
+  logEmpty();
+  logSuccess(
+    chalk.bold("cofhe-hardhat-plugin :: mocks deployed successfully"),
+    0,
   );
+  logEmpty();
 };
