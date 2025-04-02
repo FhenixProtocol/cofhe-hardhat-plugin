@@ -1,12 +1,35 @@
-import { TASK_MANAGER_ADDRESS } from "./addresses";
+import { TASK_MANAGER_ADDRESS, ZK_VERIFIER_ADDRESS } from "./addresses";
 import { expect } from "chai";
 import { ethers } from "ethers";
 import { HardhatEthersProvider } from "@nomicfoundation/hardhat-ethers/internal/hardhat-ethers-provider";
+
+const mock_checkIsTestnet = async (
+  fnName: string,
+  provider: HardhatEthersProvider | ethers.JsonRpcProvider,
+) => {
+  // Testnet is checked by testing if MockZkVerifier is deployed
+
+  // Get bytecode at ZK_VERIFIER_ADDRESS
+  const bytecode = await provider.getCode(ZK_VERIFIER_ADDRESS);
+
+  // If bytecode is empty, we are on a testnet
+  const isTestnet = bytecode.length === 0;
+
+  // Log if we are on a testnet
+  if (isTestnet) {
+    console.log(`${fnName} - skipped on non-testnet chain`);
+  }
+
+  return isTestnet;
+};
 
 export const mock_getPlaintext = async (
   provider: HardhatEthersProvider | ethers.JsonRpcProvider,
   ctHash: bigint,
 ) => {
+  // Skip with log if called on a non-testnet chain
+  if (await mock_checkIsTestnet(mock_getPlaintext.name, provider)) return;
+
   // Connect to MockTaskManager
   const taskManager = new ethers.Contract(
     TASK_MANAGER_ADDRESS,
@@ -24,6 +47,9 @@ export const mock_getPlaintextExists = async (
   provider: HardhatEthersProvider | ethers.JsonRpcProvider,
   ctHash: bigint,
 ) => {
+  // Skip with log if called on a non-testnet chain
+  if (await mock_checkIsTestnet(mock_getPlaintextExists.name, provider)) return;
+
   // Connect to MockTaskManager
   const taskManager = new ethers.Contract(
     TASK_MANAGER_ADDRESS,
@@ -42,6 +68,9 @@ export const mock_expectPlaintext = async (
   ctHash: bigint,
   expectedValue: bigint,
 ) => {
+  // Skip with log if called on a non-testnet chain
+  if (await mock_checkIsTestnet(mock_expectPlaintext.name, provider)) return;
+
   // Expect the plaintext to exist
   const plaintextExists = await mock_getPlaintextExists(provider, ctHash);
   expect(plaintextExists).equal(true, "Plaintext does not exist");
