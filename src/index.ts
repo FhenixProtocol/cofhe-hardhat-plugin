@@ -135,3 +135,4 @@ task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
 
 export * from "./mockUtils";
 export * from "./cofhejs";
+export * from "./result";

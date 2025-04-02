@@ -10,17 +10,17 @@ Hardhat plugin that manages:
 
 Ordered Tasks
 
-- [ ] Mocks (ROGUE)
+- [x] Mocks (ROGUE)
   - [x] Import `fhenixprotocol/cofhe-mock-contracts`
   - [x] Fix `cofhe-mock-contracts` build (add vite build)
   - [x] Get mock injection working in tasks
   - [x] Write tests for the mock injections
   - [x] Create utilities necessary to interact with CoFHE
-  - [ ] Import `fhenixprotocol/cofhejs`
-  - [ ] Create `initializeWithHardhatSigner` utility function for `cofhejs`
-  - [ ] Test `cofhejs.encrypt` against `cofhe-mock-contracts`
-  - [ ] Test `cofhejs.unseal` against `cofhe-mock-contracts`
-  - [ ] Test full `cofhejs` pipeline
+  - [x] Import `fhenixprotocol/cofhejs`
+  - [x] Create `initializeWithHardhatSigner` utility function for `cofhejs`
+  - [x] Test `cofhejs.encrypt` against `cofhe-mock-contracts`
+  - [x] Test `cofhejs.unseal` against `cofhe-mock-contracts`
+  - [x] Test full `cofhejs` pipeline
 - [x] Create `fhenixprotocol/cofhe-hardhat-starter` repo
   - [x] Import this (`cofhe-hardhat-plugin`)
   - [x] Create example contract
@@ -49,9 +49,9 @@ Test Matrix
 +------------------+-------+------------+-------------+
 |        _         | Mocks | Localcofhe | Arb-Sepolia |
 +------------------+-------+------------+-------------+
-| zkPoK            | [ ]   | [ ]        | [ ]         |
-| Ops              | [ ]   | [ ]        | [ ]         |
-| On-chain decrypt | [ ]   | [ ]        | [ ]         |
-| Query sealoutput | [ ]   | [ ]        | [ ]         |
+| zkPoK            | [x]   | [ ]        | [ ]         |
+| Ops              | [x]   | [ ]        | [ ]         |
+| On-chain decrypt | [x]   | [ ]        | [ ]         |
+| Query sealoutput | [x]   | [ ]        | [ ]         |
 +------------------+-------+------------+-------------+
 ```
