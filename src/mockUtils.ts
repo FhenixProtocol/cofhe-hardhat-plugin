@@ -1,10 +1,12 @@
 import { TASK_MANAGER_ADDRESS } from "./addresses";
 import { expect } from "chai";
 import { ethers } from "ethers";
+import { HardhatEthersProvider } from "@nomicfoundation/hardhat-ethers/internal/hardhat-ethers-provider";
 
-export const mock_getPlaintext = async (ctHash: bigint) => {
-  const provider = new ethers.JsonRpcProvider("http://localhost:8545");
-
+export const mock_getPlaintext = async (
+  provider: HardhatEthersProvider | ethers.JsonRpcProvider,
+  ctHash: bigint,
+) => {
   // Connect to MockTaskManager
   const taskManager = new ethers.Contract(
     TASK_MANAGER_ADDRESS,
@@ -18,9 +20,10 @@ export const mock_getPlaintext = async (ctHash: bigint) => {
   return plaintext;
 };
 
-export const mock_getPlaintextExists = async (ctHash: bigint) => {
-  const provider = new ethers.JsonRpcProvider("http://localhost:8545");
-
+export const mock_getPlaintextExists = async (
+  provider: HardhatEthersProvider | ethers.JsonRpcProvider,
+  ctHash: bigint,
+) => {
   // Connect to MockTaskManager
   const taskManager = new ethers.Contract(
     TASK_MANAGER_ADDRESS,
@@ -35,14 +38,15 @@ export const mock_getPlaintextExists = async (ctHash: bigint) => {
 };
 
 export const mock_expectPlaintext = async (
+  provider: HardhatEthersProvider | ethers.JsonRpcProvider,
   ctHash: bigint,
   expectedValue: bigint,
 ) => {
   // Expect the plaintext to exist
-  const plaintextExists = await mock_getPlaintextExists(ctHash);
+  const plaintextExists = await mock_getPlaintextExists(provider, ctHash);
   expect(plaintextExists).equal(true, "Plaintext does not exist");
 
   // Expect the plaintext to have the expected value
-  const plaintext = await mock_getPlaintext(ctHash);
+  const plaintext = await mock_getPlaintext(provider, ctHash);
   expect(plaintext).equal(expectedValue, "Plaintext value is incorrect");
 };
