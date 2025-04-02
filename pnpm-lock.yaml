@@ -29,18 +29,12 @@ importers:
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
-      cofhejs:
-        specifier: 0.1.1
-        version: 0.1.1
       ethers:
         specifier: ^6.10.0
         version: 6.10.0
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.3
-      hardhat:
-        specifier: ^2.22.19
-        version: 2.22.19(ts-node@8.10.2(typescript@5.8.2))(typescript@5.8.2)
     devDependencies:
       '@types/chai':
         specifier: ^4.1.7
@@ -66,6 +60,9 @@ importers:
       chai:
         specifier: ^4.2.0
         version: 4.3.10
+      cofhejs:
+        specifier: ^0.1.1
+        version: 0.1.1
       eslint:
         specifier: ^8.26.0
         version: 8.57.1
@@ -78,6 +75,9 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.3.0
+      hardhat:
+        specifier: ^2.11.0
+        version: 2.22.19(ts-node@8.10.2(typescript@5.8.2))(typescript@5.8.2)
       mocha:
         specifier: ^10.4.0
         version: 10.8.2
