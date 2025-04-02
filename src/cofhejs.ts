@@ -26,11 +26,18 @@ export const initializeWithHardhatSigner = async (
       try {
         return signer.provider.call(...args);
       } catch (e) {
-        throw new Error(`fhenixsdk initializeWithHHSigner :: call :: ${e}`);
+        throw new Error(`cofhejs initializeWithHHSigner :: call :: ${e}`);
       }
     },
     getChainId: async () =>
       (await signer.provider.getNetwork()).chainId.toString(),
+    send: async (...args) => {
+      try {
+        return signer.provider.send(...args);
+      } catch (e) {
+        throw new Error(`cofhejs initializeWithHHSigner :: send :: ${e}`);
+      }
+    },
   };
   const abstractSigner: AbstractSigner = {
     signTypedData: async (domain, types, value) =>
@@ -41,8 +48,17 @@ export const initializeWithHardhatSigner = async (
       ),
     getAddress: async () => signer.getAddress(),
     provider: abstractProvider,
+    sendTransaction: async (...args) => {
+      try {
+        const tx = await signer.sendTransaction(...args);
+        return tx.hash;
+      } catch (e) {
+        throw new Error(
+          `cofhejs initializeWithHHSigner :: sendTransaction :: ${e}`,
+        );
+      }
+    },
   };
-
   return cofhejs.initialize({
     ...params,
     provider: abstractProvider,
