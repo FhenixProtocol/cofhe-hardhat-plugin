@@ -10,6 +10,8 @@ import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
 
+// Deployments
+
 const deployMockTaskManager = async (hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
 
@@ -109,17 +111,24 @@ const deployMockQueryDecrypter = async (
   return queryDecrypter;
 };
 
-const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
-  const setAclTx = await taskManager.setACLContract(await acl.getAddress());
-  await setAclTx.wait();
-};
-
 const deployTestBedContract = async (hre: HardhatRuntimeEnvironment) => {
   const testBedFactory = await hre.artifacts.readArtifact("TestBed");
   await hardhatSetCode(hre, TEST_BED_ADDRESS, testBedFactory.deployedBytecode);
   const testBed = await hre.ethers.getContractAt("TestBed", TEST_BED_ADDRESS);
   await testBed.waitForDeployment();
   return testBed;
+};
+
+// Initializations
+
+const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
+  const setAclTx = await taskManager.setACLContract(await acl.getAddress());
+  await setAclTx.wait();
+};
+
+const setTaskManagerLogOps = async (taskManager: Contract, logOps: boolean) => {
+  const setLogOpsTx = await taskManager.setLogOps(logOps);
+  await setLogOpsTx.wait();
 };
 
 export const deployMocks = async (
@@ -156,6 +165,12 @@ export const deployMocks = async (
     "\t\t",
     chalk.bold(await taskManager.getAddress()),
   );
+
+  const logOps = true;
+  if (logOps) {
+    await setTaskManagerLogOps(taskManager, true);
+    console.log(chalk.green("    ✓ TaskManager logOps set"));
+  }
 
   const acl = await deployMockACL(hre);
   console.log(
