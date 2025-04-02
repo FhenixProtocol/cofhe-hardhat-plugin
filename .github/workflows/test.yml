@@ -1,21 +1,31 @@
 name: Tests
 on: [push]
+
 jobs:
   Tests:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/login-action@v3.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          node-version: "20"
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: latest
-          run_install: true
-      - run: pnpm test
-      - run: pnpm lint
-      - run: pnpm build
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run linter
+        run: pnpm lint
+
+      - name: Build project
+        run: pnpm build
