@@ -61,8 +61,8 @@ importers:
         specifier: ^4.2.0
         version: 4.3.10
       cofhejs:
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.1.2
+        version: 0.1.2
       eslint:
         specifier: ^8.26.0
         version: 8.57.1
@@ -664,8 +664,8 @@ packages:
   cliui@7.0.4:
     resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
 
-  cofhejs@0.1.1:
-    resolution: {integrity: sha512-SA5xLO5HjQqnM0fYE4PYHzTdXSA9R79YwzgzBxwGNofzzdWFxJQwOkK00euU49AoYbd0NW7DMCRuTIUyesNuCg==}
+  cofhejs@0.1.2:
+    resolution: {integrity: sha512-4jENEsdbnTqORiSA6NFiNvzuZNGrDEzYL1zZZVIabXlVgwNR4CwY71+qYW8APRCMFD7Md6IOFb95FipGOHy+3Q==}
     engines: {node: '>=20.0.0'}
 
   color-convert@2.0.1:
@@ -1014,6 +1014,9 @@ packages:
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
+
+  idb-keyval@6.2.1:
+    resolution: {integrity: sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg==}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -2337,9 +2340,10 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cofhejs@0.1.1:
+  cofhejs@0.1.2:
     dependencies:
       '@types/node': 20.17.28
+      idb-keyval: 6.2.1
       immer: 10.1.1
       node-tfhe: 0.11.1
       tfhe: 0.11.1
@@ -2803,6 +2807,8 @@ snapshots:
   iconv-lite@0.4.24:
     dependencies:
       safer-buffer: 2.1.2
+
+  idb-keyval@6.2.1: {}
 
   ignore@5.3.2: {}
 
