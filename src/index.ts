@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { extendConfig, task, types } from "hardhat/config";
 
-import { sendFunds } from "./common";
+import { localcofheFundAccount } from "./common";
 import { TASK_COFHE_USE_FAUCET } from "./const";
 import { deployMocks } from "./deploy-mocks";
 import { TASK_NODE, TASK_TEST } from "hardhat/builtin-tasks/task-names";
@@ -31,8 +31,6 @@ extendConfig((config, userConfig) => {
 
 type UseFaucetArgs = {
   address?: string;
-  // account?: number;
-  // url?: string;
 };
 
 task(TASK_COFHE_USE_FAUCET, "Fund an account from the funder")
@@ -58,7 +56,7 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the funder")
     console.info(chalk.green(`Getting funds from faucet for ${address}`));
 
     try {
-      await sendFunds(hre, address);
+      await localcofheFundAccount(hre, address);
     } catch (e) {
       console.info(
         chalk.red(

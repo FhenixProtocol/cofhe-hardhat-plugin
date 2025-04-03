@@ -1,28 +1,6 @@
 import axios from "axios";
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-
-export const getFunds = async (address: string, url?: string) => {
-  // TODO: Update this to use the updated faucet url for localcofhe host chain
-  // - architect 2025-03-27
-  const faucetUrl = url || `http://localhost:42000`;
-
-  const response = await axios.get(`${faucetUrl}/faucet?address=${address}`);
-
-  if (response.status !== 200) {
-    throw new Error(
-      `Failed to get funds from faucet: ${response.status}: ${response.statusText}`,
-    );
-  }
-
-  if (!response.data?.message?.includes("ETH successfully sent to address")) {
-    throw new Error(
-      `Failed to get funds from faucet: ${JSON.stringify(response.data)}`,
-    );
-  }
-};
-
-
 /**
  * Sends funds to the specified address
  * @param hre Hardhat Runtime Environment
@@ -30,7 +8,7 @@ export const getFunds = async (address: string, url?: string) => {
  * @param amount Amount to send in ETH (default: 10)
  * @returns Transaction receipt or null if failed
  */
-export async function sendFunds(
+export async function localcofheFundAccount(
   hre: HardhatRuntimeEnvironment,
   toAddress: string,
   amount: string = "10"
@@ -93,7 +71,7 @@ export async function localcofheFundWalletIfNeeded(hre: HardhatRuntimeEnvironmen
 
   if (walletBalance < hre.ethers.parseEther("1")) {
     console.log(`Wallet balance is less than 1 ETH. Funding ${walletAddress}...`);
-    const receipt = await sendFunds(hre, walletAddress);
+    const receipt = await localcofheFundAccount(hre, walletAddress);
     if (receipt) {
       const newBalance = await hre.ethers.provider.getBalance(walletAddress)
       console.log(`Wallet new balance: ${hre.ethers.formatEther(newBalance)} ETH`);
