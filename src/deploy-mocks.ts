@@ -9,7 +9,6 @@ import {
 import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
-import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 
 // Logging
 

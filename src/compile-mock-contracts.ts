@@ -1,4 +1,5 @@
 import fs from "fs";
+import { task } from "hardhat/config";
 import { HardhatPluginError } from "hardhat/plugins";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import path from "path";
@@ -79,8 +80,50 @@ export const compileMockContractPaths = async (
   }
 
   try {
-    await hre.run("compile");
+    await hre.run("compile:silent");
   } finally {
     fs.rmSync(directory, { recursive: true });
   }
 };
+
+// Override the compile:silent task to filter out warning logs
+task("compile:silent", "Compiles without printing warnings").setAction(
+  async (args, hre, runSuper) => {
+    // Store original console methods
+    const originalLog = console.log;
+    const originalWarn = console.warn;
+    const originalError = console.error;
+
+    // Override console methods to filter warnings
+    console.log = (...args) => {
+      const logString = args.join(" ");
+      if (!logString.includes("Warning")) {
+        originalLog.apply(console, args);
+      }
+    };
+
+    console.warn = (...args) => {
+      const logString = args.join(" ");
+      if (!logString.includes("Warning")) {
+        originalWarn.apply(console, args);
+      }
+    };
+
+    console.error = (...args) => {
+      const logString = args.join(" ");
+      if (!logString.includes("Warning")) {
+        originalError.apply(console, args);
+      }
+    };
+
+    try {
+      // Run the original compile task
+      await hre.run("compile");
+    } finally {
+      // Restore original console methods
+      console.log = originalLog;
+      console.warn = originalWarn;
+      console.error = originalError;
+    }
+  },
+);
