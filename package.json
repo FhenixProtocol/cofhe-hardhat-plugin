@@ -1,6 +1,6 @@
 {
   "name": "cofhe-hardhat-plugin",
-  "version": "0.1.4-alpha.1",
+  "version": "0.1.4-alpha.2",
   "description": "Hardhat TypeScript plugin boilerplate",
   "repository": "github:FhenixProtocol/cofhe-hardhat-plugin",
   "author": "Fhe Labs",
@@ -63,6 +63,6 @@
   },
   "peerDependencies": {
     "hardhat": "^2.11.0",
-    "cofhejs": "^0.1.1"
+    "cofhejs": "^0.1.2"
   }
 }
