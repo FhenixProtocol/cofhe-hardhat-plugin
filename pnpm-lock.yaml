@@ -61,8 +61,8 @@ importers:
         specifier: ^4.2.0
         version: 4.3.10
       cofhejs:
-        specifier: ^0.1.2
-        version: 0.1.2
+        specifier: ^0.1.3
+        version: 0.1.3
       eslint:
         specifier: ^8.26.0
         version: 8.57.1
@@ -664,8 +664,8 @@ packages:
   cliui@7.0.4:
     resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
 
-  cofhejs@0.1.2:
-    resolution: {integrity: sha512-4jENEsdbnTqORiSA6NFiNvzuZNGrDEzYL1zZZVIabXlVgwNR4CwY71+qYW8APRCMFD7Md6IOFb95FipGOHy+3Q==}
+  cofhejs@0.1.3:
+    resolution: {integrity: sha512-Z3eux0VdK/Y8TohjlSqI7wmmHD3I4jRjehycwIFiW5G7rcC6vc4XyKV+2vLPO9k/E6mB7oM/RebQKSjida3SSQ==}
     engines: {node: '>=20.0.0'}
 
   color-convert@2.0.1:
@@ -2340,7 +2340,7 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cofhejs@0.1.2:
+  cofhejs@0.1.3:
     dependencies:
       '@types/node': 20.17.28
       idb-keyval: 6.2.1
