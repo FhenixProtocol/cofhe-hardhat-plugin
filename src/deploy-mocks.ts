@@ -168,7 +168,13 @@ const setTaskManagerLogOps = async (taskManager: Contract, logOps: boolean) => {
 
 export const deployMocks = async (
   hre: HardhatRuntimeEnvironment,
-  deployTestBed = false,
+  options: {
+    deployTestBed?: boolean;
+    logOps?: boolean;
+  } = {
+    deployTestBed: true,
+    logOps: true,
+  },
 ) => {
   // Check if network is Hardhat, if not log skip message and return
   const isHardhat = await checkNetworkAndSkip(hre);
@@ -188,8 +194,7 @@ export const deployMocks = async (
   const taskManager = await deployMockTaskManager(hre);
   logDeployment("MockTaskManager", await taskManager.getAddress());
 
-  const logOps = true;
-  if (logOps) {
+  if (options.logOps) {
     await setTaskManagerLogOps(taskManager, true);
     logSuccess("TaskManager logOps set", 2);
   }
@@ -206,7 +211,7 @@ export const deployMocks = async (
   const queryDecrypter = await deployMockQueryDecrypter(hre, acl);
   logDeployment("MockQueryDecrypter", await queryDecrypter.getAddress());
 
-  if (deployTestBed) {
+  if (options.deployTestBed) {
     logSuccess("TestBed deployment enabled", 2);
     const testBed = await deployTestBedContract(hre);
     logDeployment("TestBed", await testBed.getAddress());
