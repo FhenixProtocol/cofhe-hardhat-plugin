@@ -1,10 +1,25 @@
 import chalk from "chalk";
 import { extendConfig, task, types } from "hardhat/config";
+import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
 import { localcofheFundAccount } from "./common";
 import { TASK_COFHE_USE_FAUCET } from "./const";
 import { deployMocks } from "./deploy-mocks";
 import { TASK_NODE, TASK_TEST } from "hardhat/builtin-tasks/task-names";
+
+declare module "hardhat/types/config" {
+  interface HardhatUserConfig {
+    cofhe?: {
+      logMocks?: boolean;
+    };
+  }
+
+  interface HardhatConfig {
+    cofhe: {
+      logMocks: boolean;
+    };
+  }
+}
 
 extendConfig((config, userConfig) => {
   // Allow users to override the localcofhe network config
@@ -26,6 +41,11 @@ extendConfig((config, userConfig) => {
       "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",
       "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
     ],
+  };
+
+  // Add cofhe config
+  config.cofhe = {
+    logMocks: userConfig.cofhe?.logMocks ?? false,
   };
 });
 
@@ -62,23 +82,47 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the funder")
     }
   });
 
-task(
-  "deploy-mocks",
-  "Deploys the mock contracts on the Hardhat network",
-).setAction(async (taskArgs, hre) => {
-  await deployMocks(hre, true);
-});
+type DeployMocksArgs = {
+  deployTestBed?: boolean;
+  logMocks?: boolean;
+};
+
+task("deploy-mocks", "Deploys the mock contracts on the Hardhat network")
+  .addOptionalParam(
+    "deployTestBed",
+    "Whether to deploy the test bed",
+    true,
+    types.boolean,
+  )
+  .addOptionalParam(
+    "logMocks",
+    "Whether to log mock operations",
+    undefined,
+    types.boolean,
+  )
+  .setAction(async ({ deployTestBed, logMocks }: DeployMocksArgs, hre) => {
+    await deployMocks(hre, {
+      deployTestBed: deployTestBed ?? true,
+      logOps: logMocks ?? hre.config.cofhe.logMocks ?? true,
+    });
+  });
 
 task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
   async ({}, hre, runSuper) => {
-    await deployMocks(hre, true);
+    await deployMocks(hre, {
+      deployTestBed: true,
+      logOps: hre.config.cofhe.logMocks,
+    });
     return runSuper();
   },
 );
 
 task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
   async ({}, hre, runSuper) => {
-    await deployMocks(hre, true);
+    await deployMocks(hre, {
+      deployTestBed: true,
+      logOps: hre.config.cofhe.logMocks,
+    });
     return runSuper();
   },
 );
