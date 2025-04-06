@@ -42,11 +42,13 @@ extendConfig((config, userConfig) => {
       "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
     ],
   };
-  
+
   // Only add Sepolia config if user hasn't defined it
   if (!userConfig.networks?.["eth-sepolia"]) {
     config.networks["eth-sepolia"] = {
-      url: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia.publicnode.com",
+      url:
+        process.env.SEPOLIA_RPC_URL ||
+        "https://ethereum-sepolia.publicnode.com",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 11155111,
       gas: "auto",
@@ -60,7 +62,9 @@ extendConfig((config, userConfig) => {
   // Only add Arbitrum Sepolia config if user hasn't defined it
   if (!userConfig.networks?.["arb-sepolia"]) {
     config.networks["arb-sepolia"] = {
-      url: process.env.ARBITRUM_SEPOLIA_RPC_URL || "https://sepolia-rollup.arbitrum.io/rpc",
+      url:
+        process.env.ARBITRUM_SEPOLIA_RPC_URL ||
+        "https://sepolia-rollup.arbitrum.io/rpc",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 421614,
       gas: "auto",
@@ -73,7 +77,7 @@ extendConfig((config, userConfig) => {
 
   // Add cofhe config
   config.cofhe = {
-    logMocks: userConfig.cofhe?.logMocks ?? false,
+    logMocks: userConfig.cofhe?.logMocks ?? true,
   };
 });
 
@@ -125,7 +129,7 @@ task("deploy-mocks", "Deploys the mock contracts on the Hardhat network")
   .addOptionalParam(
     "logMocks",
     "Whether to log mock operations",
-    undefined,
+    true,
     types.boolean,
   )
   .setAction(async ({ deployTestBed, logMocks }: DeployMocksArgs, hre) => {
