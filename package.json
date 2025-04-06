@@ -31,6 +31,7 @@
   ],
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@types/chai": "^4.1.7",
     "@types/eslint": "^8",
     "@types/fs-extra": "^11.0.4",
