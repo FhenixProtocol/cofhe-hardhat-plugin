@@ -42,6 +42,34 @@ extendConfig((config, userConfig) => {
       "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6",
     ],
   };
+  
+  // Only add Sepolia config if user hasn't defined it
+  if (!userConfig.networks?.["eth-sepolia"]) {
+    config.networks["eth-sepolia"] = {
+      url: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia.publicnode.com",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 11155111,
+      gas: "auto",
+      gasMultiplier: 1.2,
+      gasPrice: "auto",
+      timeout: 60_000,
+      httpHeaders: {},
+    };
+  }
+
+  // Only add Arbitrum Sepolia config if user hasn't defined it
+  if (!userConfig.networks?.["arb-sepolia"]) {
+    config.networks["arb-sepolia"] = {
+      url: process.env.ARBITRUM_SEPOLIA_RPC_URL || "https://sepolia-rollup.arbitrum.io/rpc",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 421614,
+      gas: "auto",
+      gasMultiplier: 1.2,
+      gasPrice: "auto",
+      timeout: 60_000,
+      httpHeaders: {},
+    };
+  }
 
   // Add cofhe config
   config.cofhe = {
