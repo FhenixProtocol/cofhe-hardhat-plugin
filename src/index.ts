@@ -1,6 +1,5 @@
 import chalk from "chalk";
 import { extendConfig, task, types } from "hardhat/config";
-import { HardhatConfig, HardhatUserConfig } from "hardhat/types";
 
 import { localcofheFundAccount } from "./common";
 import { TASK_COFHE_USE_FAUCET } from "./const";
@@ -11,12 +10,14 @@ declare module "hardhat/types/config" {
   interface HardhatUserConfig {
     cofhe?: {
       logMocks?: boolean;
+      gasWarning?: boolean;
     };
   }
 
   interface HardhatConfig {
     cofhe: {
       logMocks: boolean;
+      gasWarning: boolean;
     };
   }
 }
@@ -78,6 +79,7 @@ extendConfig((config, userConfig) => {
   // Add cofhe config
   config.cofhe = {
     logMocks: userConfig.cofhe?.logMocks ?? true,
+    gasWarning: userConfig.cofhe?.gasWarning ?? true,
   };
 });
 
@@ -136,6 +138,7 @@ task("deploy-mocks", "Deploys the mock contracts on the Hardhat network")
     await deployMocks(hre, {
       deployTestBed: deployTestBed ?? true,
       logOps: logMocks ?? hre.config.cofhe.logMocks ?? true,
+      gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
   });
 
@@ -144,6 +147,7 @@ task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
     await deployMocks(hre, {
       deployTestBed: true,
       logOps: hre.config.cofhe.logMocks,
+      gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
     return runSuper();
   },
@@ -154,6 +158,7 @@ task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
     await deployMocks(hre, {
       deployTestBed: true,
       logOps: hre.config.cofhe.logMocks,
+      gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
     return runSuper();
   },

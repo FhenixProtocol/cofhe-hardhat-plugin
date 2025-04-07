@@ -20,6 +20,13 @@ const logSuccess = (message: string, indent = 1) => {
   console.log(chalk.green(`${"  ".repeat(indent)}✓ ${message}`));
 };
 
+const logWarning = (message: string, indent = 1) => {
+  console.log(
+    chalk.bold(chalk.yellow(`${"  ".repeat(indent)}⚠ NOTE:`)),
+    message,
+  );
+};
+
 const logError = (message: string, indent = 1) => {
   console.log(chalk.red(`${"  ".repeat(indent)}✗ ${message}`));
 };
@@ -171,9 +178,11 @@ export const deployMocks = async (
   options: {
     deployTestBed?: boolean;
     logOps?: boolean;
+    gasWarning?: boolean;
   } = {
     deployTestBed: true,
     logOps: true,
+    gasWarning: true,
   },
 ) => {
   // Check if network is Hardhat, if not log skip message and return
@@ -223,5 +232,15 @@ export const deployMocks = async (
     chalk.bold("cofhe-hardhat-plugin :: mocks deployed successfully"),
     0,
   );
+
+  // Log warning about mocks increased gas costs
+  if (options.gasWarning) {
+    logEmpty();
+    logWarning(
+      "When using mocks, FHE operations (eg FHE.add / FHE.mul) report a higher gas price due to additional on-chain mocking logic. Deploy your contracts on a testnet chain to check the true gas costs.\n(Disable this warning by setting 'cofhejs.gasWarning' to false in your hardhat config",
+      0,
+    );
+  }
+
   logEmpty();
 };

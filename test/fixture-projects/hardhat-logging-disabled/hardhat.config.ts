@@ -13,6 +13,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   cofhe: {
     logMocks: false,
+    gasWarning: false,
   },
 };
 
