@@ -45,7 +45,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "fs-extra": "^11.2.0",
     "hardhat": "^2.11.0",
-    "cofhejs": "^0.1.3",
+    "cofhejs": "^0.2.0",
     "mocha": "^10.4.0",
     "prettier": "2.0.5",
     "ts-node": "^8.1.0",
@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@fhenixprotocol/cofhe-contracts": "0.0.13",
-    "@fhenixprotocol/cofhe-mock-contracts": "^0.0.3",
+    "@fhenixprotocol/cofhe-mock-contracts": "^0.2.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
     "@openzeppelin/contracts": "^5.0.0",
     "@openzeppelin/contracts-upgradeable": "^5.0.0",
@@ -64,6 +64,6 @@
   },
   "peerDependencies": {
     "hardhat": "^2.11.0",
-    "cofhejs": "^0.1.3"
+    "cofhejs": "^0.2.0"
   }
 }
