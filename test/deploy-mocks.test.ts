@@ -1,7 +1,9 @@
 import { expect } from "chai";
 import { useEnvironment } from "./helpers";
 import { TASK_MANAGER_ADDRESS, TEST_BED_ADDRESS } from "../src/addresses";
+import { TASK_COFHE_MOCKS_DEPLOY } from "../src/const";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+
 describe("Deploy Mocks Task", function () {
   const getTestBedBytecode = async (hre: HardhatRuntimeEnvironment) => {
     return await hre.ethers.provider.getCode(TEST_BED_ADDRESS);
@@ -11,7 +13,7 @@ describe("Deploy Mocks Task", function () {
     useEnvironment("hardhat-logging-enabled");
 
     it("should deploy mocks with logging and test bed", async function () {
-      await this.hre.run("deploy-mocks", {
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
         deployTestBed: true,
         logMocks: true,
       });
@@ -36,7 +38,7 @@ describe("Deploy Mocks Task", function () {
     });
 
     it("should deploy mocks with logging but without test bed", async function () {
-      await this.hre.run("deploy-mocks", {
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
         deployTestBed: false,
         logMocks: true,
       });
@@ -59,7 +61,7 @@ describe("Deploy Mocks Task", function () {
     useEnvironment("hardhat-logging-disabled");
 
     it("should deploy mocks without logging and with test bed", async function () {
-      await this.hre.run("deploy-mocks", {
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
         deployTestBed: true,
         logMocks: false,
       });
@@ -84,7 +86,7 @@ describe("Deploy Mocks Task", function () {
     });
 
     it("should deploy mocks without logging and without test bed", async function () {
-      await this.hre.run("deploy-mocks", {
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
         deployTestBed: false,
         logMocks: false,
       });

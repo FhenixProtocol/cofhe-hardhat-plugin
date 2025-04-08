@@ -1,6 +1,6 @@
 // tslint:disable-next-line no-implicit-dependencies
 import { expect } from "chai";
-import { TASK_COFHE_USE_FAUCET } from "../src/const";
+import { TASK_COFHE_MOCKS_DEPLOY, TASK_COFHE_USE_FAUCET } from "../src/const";
 import { useEnvironment } from "./helpers";
 import {
   QUERY_DECRYPTER_ADDRESS,
@@ -19,7 +19,7 @@ describe("Cofhe Hardhat Plugin", function () {
   describe("Hardhat Mocks", async () => {
     useEnvironment("hardhat");
     it("checks that the mocks are deployed", async function () {
-      await this.hre.run("deploy-mocks");
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY);
 
       const taskManager = await this.hre.ethers.getContractAt(
         "TaskManager",

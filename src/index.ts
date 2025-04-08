@@ -2,9 +2,14 @@ import chalk from "chalk";
 import { extendConfig, task, types } from "hardhat/config";
 
 import { localcofheFundAccount } from "./common";
-import { TASK_COFHE_USE_FAUCET } from "./const";
+import {
+  TASK_COFHE_MOCKS_DEPLOY,
+  TASK_COFHE_MOCKS_SET_LOG_OPS,
+  TASK_COFHE_USE_FAUCET,
+} from "./const";
+import { TASK_TEST, TASK_NODE } from "hardhat/builtin-tasks/task-names";
 import { deployMocks } from "./deploy-mocks";
-import { TASK_NODE, TASK_TEST } from "hardhat/builtin-tasks/task-names";
+import { mock_setLogging } from "./mock-logs";
 
 declare module "hardhat/types/config" {
   interface HardhatUserConfig {
@@ -116,12 +121,17 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the funder")
     }
   });
 
+// DEPLOY TASKS
+
 type DeployMocksArgs = {
   deployTestBed?: boolean;
   logMocks?: boolean;
 };
 
-task("deploy-mocks", "Deploys the mock contracts on the Hardhat network")
+task(
+  TASK_COFHE_MOCKS_DEPLOY,
+  "Deploys the mock contracts on the Hardhat network",
+)
   .addOptionalParam(
     "deployTestBed",
     "Whether to deploy the test bed",
@@ -164,9 +174,25 @@ task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
   },
 );
 
+// SET LOG OPS
+
+task(TASK_COFHE_MOCKS_SET_LOG_OPS, "Set logging for the Mock CoFHE contracts")
+  .addParam("enable", "Whether to enable logging", false, types.boolean)
+  .addOptionalParam(
+    "closureName",
+    "The name of the function to log within (optional)",
+    undefined,
+    types.string,
+  )
+  .setAction(async ({ enable, closureName }, hre) => {
+    await mock_setLogging(hre, enable, closureName);
+  });
+
 // MOCK UTILS
 
 export * from "./mockUtils";
 export * from "./networkUtils";
 export * from "./result";
 export * from "./common";
+export * from "./mock-logs";
+export * from "./deploy-mocks";

@@ -1,4 +1,12 @@
-import { hardhatSetCode } from "./utils";
+import {
+  checkNetworkAndSkip,
+  hardhatSetCode,
+  logDeployment,
+  logEmpty,
+  logError,
+  logSuccess,
+  logWarning,
+} from "./utils";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   TASK_MANAGER_ADDRESS,
@@ -9,47 +17,11 @@ import {
 import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
+import { TASK_TEST, TASK_NODE } from "hardhat/builtin-tasks/task-names";
+import { task, types } from "hardhat/config";
+import { TASK_COFHE_MOCKS_DEPLOY } from "./const";
 
-// Logging
-
-const logEmpty = () => {
-  console.log("");
-};
-
-const logSuccess = (message: string, indent = 1) => {
-  console.log(chalk.green(`${"  ".repeat(indent)}✓ ${message}`));
-};
-
-const logWarning = (message: string, indent = 1) => {
-  console.log(
-    chalk.bold(chalk.yellow(`${"  ".repeat(indent)}⚠ NOTE:`)),
-    message,
-  );
-};
-
-const logError = (message: string, indent = 1) => {
-  console.log(chalk.red(`${"  ".repeat(indent)}✗ ${message}`));
-};
-
-const logDeployment = (contractName: string, address: string) => {
-  const paddedName = `${contractName} deployed`.padEnd(36);
-  logSuccess(`${paddedName} ${chalk.bold(address)}`);
-};
-
-// Network Check
-
-const checkNetworkAndSkip = async (hre: HardhatRuntimeEnvironment) => {
-  const network = hre.network.name;
-  const isHardhat = network === "hardhat";
-  if (!isHardhat)
-    logSuccess(
-      `cofhe-hardhat-plugin - deploy mocks - skipped on non-hardhat network ${network}`,
-      0,
-    );
-  return isHardhat;
-};
-
-// Deployments
+// Deploy
 
 const deployMockTaskManager = async (hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
