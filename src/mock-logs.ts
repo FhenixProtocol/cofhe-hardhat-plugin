@@ -43,13 +43,19 @@ export const mock_setLoggingEnabled = async (
   closureName?: string,
 ) => {
   try {
+    const initiallyEnabled = await getLoggingEnabled(hre);
+
     await setLoggingEnabled(hre, enabled);
 
+    // Only print if enabling logs
     if (enabled) {
       printLogsEnabledMessage(
         `${closureName ? `"${chalk.bold(closureName)}" logs:` : "Logs:"}`,
       );
-    } else {
+    }
+
+    // Only print if disabling logs AND logs currently enabled
+    if (!enabled && initiallyEnabled) {
       printLogsBlockEnd();
     }
   } catch (error) {
@@ -62,7 +68,7 @@ export const mock_withLogs = async (
   closureName: string,
   closure: () => Promise<void>,
 ) => {
-  const initialState = await getLoggingEnabled(hre);
+  const initiallyEnabled = await getLoggingEnabled(hre);
 
   await setLoggingEnabled(hre, true);
   printLogsEnabledMessage(`"${chalk.bold(closureName)}" logs:`);
@@ -70,7 +76,7 @@ export const mock_withLogs = async (
   printLogsBlockEnd();
 
   // If logs were disabled, disable them again
-  if (!initialState) {
+  if (!initiallyEnabled) {
     await setLoggingEnabled(hre, false);
   }
 };
