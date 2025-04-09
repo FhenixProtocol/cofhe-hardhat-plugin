@@ -239,7 +239,9 @@ declare module "hardhat/types/runtime" {
        * @param {Result<T>} result - The Result to check
        * @returns {T} The inner data of the Result (non null)
        */
-      expectResultSuccess: <T>(result: Result<T>) => T;
+      expectResultSuccess: <T>(
+        result: Result<T> | Promise<Result<T>>,
+      ) => Promise<T>;
 
       /**
        * Assert that a Result type (see cofhejs) contains an error matching the partial string
@@ -268,7 +270,22 @@ declare module "hardhat/types/runtime" {
 
       mocks: {
         /**
-         * Execute a block of code with cofhe mock contracts logging enabled
+         * **[MOCKS ONLY]**
+         *
+         * Execute a block of code with cofhe mock contracts logging enabled.
+         *
+         * _(If logging only a function, we recommend passing the function name as the closureName (ex "counter.increment()"))_
+         *
+         * Expected output:
+         * ```
+         * ┌──────────────────┬──────────────────────────────────────────────────
+         * │ [COFHE-MOCKS]    │ "counter.increment()" logs:
+         * ├──────────────────┴──────────────────────────────────────────────────
+         * ├ FHE.add          | euint32(4473..3424)[0] + euint32(1157..3648)[1]  =>  euint32(1106..1872)[1]
+         * ├ FHE.allowThis    | euint32(1106..1872)[1] -> 0x663f..6602
+         * ├ FHE.allow        | euint32(1106..1872)[1] -> 0x3c44..93bc
+         * └─────────────────────────────────────────────────────────────────────
+         * ```
          * @param {string} closureName - Name of the code block to log within
          * @param {() => Promise<void>} closure - The async function to execute
          */
@@ -278,23 +295,31 @@ declare module "hardhat/types/runtime" {
         ) => Promise<void>;
 
         /**
+         * **[MOCKS ONLY]**
+         *
          * Enable logging from cofhe mock contracts
          * @param {string} closureName - Optional name of the code block to enable logging for
          */
         enableLogs: (closureName?: string) => Promise<void>;
 
         /**
+         * **[MOCKS ONLY]**
+         *
          * Disable logging from cofhe mock contracts
          */
         disableLogs: () => Promise<void>;
 
         /**
+         * **[MOCKS ONLY]**
+         *
          * Deploy the cofhe mock contracts (normally this is done automatically)
          * @param {DeployMocksArgs} options - Deployment options
          */
         deployMocks: (options: DeployMocksArgs) => Promise<void>;
 
         /**
+         * **[MOCKS ONLY]**
+         *
          * Get the plaintext value for a ciphertext hash
          * @param {bigint} ctHash - The ciphertext hash to look up
          * @returns {Promise<bigint>} The plaintext value
@@ -302,6 +327,8 @@ declare module "hardhat/types/runtime" {
         getPlaintext: (ctHash: bigint) => Promise<bigint>;
 
         /**
+         * **[MOCKS ONLY]**
+         *
          * Assert that a ciphertext hash represents an expected plaintext value
          * @param {bigint} ctHash - The ciphertext hash to check
          * @param {bigint} expectedValue - The expected plaintext value
@@ -330,8 +357,9 @@ extendEnvironment((hre) => {
     isPermittedEnvironment: (env: string) => {
       return isPermittedCofheEnvironment(hre, env);
     },
-    expectResultSuccess: <T>(result: Result<T>) => {
-      return expectResultSuccess(result);
+    expectResultSuccess: async <T>(result: Result<T> | Promise<Result<T>>) => {
+      const awaitedResult = await result;
+      return expectResultSuccess(awaitedResult);
     },
     expectResultError: <T>(result: Result<T>, errorPartial: string) => {
       return expectResultError(result, errorPartial);
