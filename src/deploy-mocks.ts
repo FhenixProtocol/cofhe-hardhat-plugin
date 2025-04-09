@@ -140,20 +140,13 @@ const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
   await setAclTx.wait();
 };
 
-const setTaskManagerLogOps = async (taskManager: Contract, logOps: boolean) => {
-  const setLogOpsTx = await taskManager.setLogOps(logOps);
-  await setLogOpsTx.wait();
-};
-
 export const deployMocks = async (
   hre: HardhatRuntimeEnvironment,
   options: {
     deployTestBed?: boolean;
-    logOps?: boolean;
     gasWarning?: boolean;
   } = {
     deployTestBed: true,
-    logOps: true,
     gasWarning: true,
   },
 ) => {
@@ -163,7 +156,7 @@ export const deployMocks = async (
 
   // Log start message
   logEmpty();
-  logSuccess(chalk.bold("cofhe-hardhat-plugin - deploy mocks"), 0);
+  logSuccess(chalk.bold("cofhe-hardhat-plugin :: deploy mocks"), 0);
   logEmpty();
 
   // Compile mock contracts
@@ -174,11 +167,6 @@ export const deployMocks = async (
   // Deploy mock contracts
   const taskManager = await deployMockTaskManager(hre);
   logDeployment("MockTaskManager", await taskManager.getAddress());
-
-  if (options.logOps) {
-    await setTaskManagerLogOps(taskManager, true);
-    logSuccess("TaskManager logOps set", 2);
-  }
 
   const acl = await deployMockACL(hre);
   logDeployment("MockACL", await acl.getAddress());
