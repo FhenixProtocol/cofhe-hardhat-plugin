@@ -5,7 +5,7 @@ import {
   TASK_COFHE_MOCKS_DEPLOY,
   TASK_COFHE_MOCKS_SET_LOG_OPS,
 } from "../src/const";
-import { mock_setLogging } from "../src/mock-logs";
+import { mock_setLoggingEnabled, mock_withLogs } from "../src/mock-logs";
 
 describe("Set Log Ops Task", function () {
   describe("With logging enabled", function () {
@@ -70,7 +70,7 @@ describe("Set Log Ops Task", function () {
       );
       expect(await taskManager.logOps()).to.equal(true);
 
-      await mock_setLogging(this.hre, false);
+      await mock_setLoggingEnabled(this.hre, false);
 
       expect(await taskManager.logOps()).to.equal(false);
     });
@@ -78,6 +78,23 @@ describe("Set Log Ops Task", function () {
 
   describe("With logging disabled", function () {
     useEnvironment("hardhat-logging-disabled");
+
+    it("(function) mock_withLogs should enable logging", async function () {
+      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
+        deployTestBed: true,
+        logMocks: false,
+      });
+
+      const taskManager = await this.hre.ethers.getContractAt(
+        "TaskManager",
+        TASK_MANAGER_ADDRESS,
+      );
+
+      await mock_withLogs(this.hre, "testFunction", async () => {
+        const logOps = await taskManager.logOps();
+        expect(logOps).to.equal(true);
+      });
+    });
 
     it("(task) should enable logging", async function () {
       // First deploy mocks to ensure TaskManager exists
@@ -139,7 +156,7 @@ describe("Set Log Ops Task", function () {
       );
       expect(await taskManager.logOps()).to.equal(false);
 
-      await mock_setLogging(this.hre, true);
+      await mock_setLoggingEnabled(this.hre, true);
 
       expect(await taskManager.logOps()).to.equal(true);
     });
