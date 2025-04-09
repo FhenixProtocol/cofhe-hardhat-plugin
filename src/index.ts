@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { extendConfig, task, types } from "hardhat/config";
+import { extendConfig, extendEnvironment, task, types } from "hardhat/config";
 
 import { localcofheFundAccount } from "./common";
 import {
@@ -9,12 +9,33 @@ import {
 } from "./const";
 import { TASK_TEST, TASK_NODE } from "hardhat/builtin-tasks/task-names";
 import { deployMocks } from "./deploy-mocks";
-import { mock_setLogging } from "./mock-logs";
+import { mock_setLoggingEnabled, mock_withLogs } from "./mock-logs";
+import { mock_expectPlaintext } from "./mockUtils";
+import { mock_getPlaintext } from "./mockUtils";
+import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import {
+  cofhejs_initializeWithHardhatSigner,
+  HHSignerInitializationParams,
+  isPermittedCofheEnvironment,
+} from "./networkUtils";
+import { Permit, Result } from "cofhejs/node";
+import {
+  expectResultError,
+  expectResultPartialValue,
+  expectResultSuccess,
+  expectResultValue,
+} from "./result";
 
+/**
+ * Configuration interface for the CoFHE Hardhat plugin.
+ * Allows users to configure mock logging and gas warning settings.
+ */
 declare module "hardhat/types/config" {
   interface HardhatUserConfig {
     cofhe?: {
+      /** Whether to log mock operations (default: true) */
       logMocks?: boolean;
+      /** Whether to show gas usage warnings for mock operations (default: true) */
       gasWarning?: boolean;
     };
   }
@@ -147,7 +168,6 @@ task(
   .setAction(async ({ deployTestBed, logMocks }: DeployMocksArgs, hre) => {
     await deployMocks(hre, {
       deployTestBed: deployTestBed ?? true,
-      logOps: logMocks ?? hre.config.cofhe.logMocks ?? true,
       gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
   });
@@ -156,7 +176,6 @@ task(TASK_TEST, "Deploy mock contracts on hardhat").setAction(
   async ({}, hre, runSuper) => {
     await deployMocks(hre, {
       deployTestBed: true,
-      logOps: hre.config.cofhe.logMocks,
       gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
     return runSuper();
@@ -167,7 +186,6 @@ task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
   async ({}, hre, runSuper) => {
     await deployMocks(hre, {
       deployTestBed: true,
-      logOps: hre.config.cofhe.logMocks,
       gasWarning: hre.config.cofhe.gasWarning ?? true,
     });
     return runSuper();
@@ -178,14 +196,8 @@ task(TASK_NODE, "Deploy mock contracts on hardhat").setAction(
 
 task(TASK_COFHE_MOCKS_SET_LOG_OPS, "Set logging for the Mock CoFHE contracts")
   .addParam("enable", "Whether to enable logging", false, types.boolean)
-  .addOptionalParam(
-    "closureName",
-    "The name of the function to log within (optional)",
-    undefined,
-    types.string,
-  )
-  .setAction(async ({ enable, closureName }, hre) => {
-    await mock_setLogging(hre, enable, closureName);
+  .setAction(async ({ enable }, hre) => {
+    await mock_setLoggingEnabled(hre, enable);
   });
 
 // MOCK UTILS
@@ -196,3 +208,161 @@ export * from "./result";
 export * from "./common";
 export * from "./mock-logs";
 export * from "./deploy-mocks";
+
+/**
+ * Runtime environment extensions for the CoFHE Hardhat plugin.
+ * Provides access to CoFHE initialization, environment checks, and mock utilities.
+ */
+declare module "hardhat/types/runtime" {
+  export interface HardhatRuntimeEnvironment {
+    cofhe: {
+      /**
+       * Initialize `cofhejs` using a Hardhat signer
+       * @param {HardhatEthersSigner} signer - The Hardhat ethers signer to use
+       * @param {HHSignerInitializationParams} params - Optional initialization parameters to be passed to `cofhejs`
+       * @returns {Promise<Result<Permit | undefined>>} The initialized CoFHE instance
+       */
+      initializeWithHardhatSigner: (
+        signer: HardhatEthersSigner,
+        params?: HHSignerInitializationParams,
+      ) => Promise<Result<Permit | undefined>>;
+
+      /**
+       * Check if a CoFHE environment is permitted for the current network
+       * @param {string} env - The environment name to check. Must be "MOCK" | "LOCAL" | "TESTNET" | "MAINNET"
+       * @returns {boolean} Whether the environment is permitted
+       */
+      isPermittedEnvironment: (env: string) => boolean;
+
+      /**
+       * Assert that a Result type (see cofhejs) returned from a function is successful and return its value
+       * @param {Result<T>} result - The Result to check
+       * @returns {T} The inner data of the Result (non null)
+       */
+      expectResultSuccess: <T>(result: Result<T>) => T;
+
+      /**
+       * Assert that a Result type (see cofhejs) contains an error matching the partial string
+       * @param {Result<T>} result - The Result to check
+       * @param {string} errorPartial - The partial error string to match
+       */
+      expectResultError: <T>(result: Result<T>, errorPartial: string) => void;
+
+      /**
+       * Assert that a Result type (see cofhejs) contains a specific value
+       * @param {Result<T>} result - The Result to check
+       * @param {T} value - The inner data of the Result (non null)
+       */
+      expectResultValue: <T>(result: Result<T>, value: T) => T;
+
+      /**
+       * Assert that a Result type (see cofhejs) contains a value matching the partial object
+       * @param {Result<T>} result - The Result to check
+       * @param {Partial<T>} partial - The partial object to match against
+       * @returns {T} The inner data of the Result (non null)
+       */
+      expectResultPartialValue: <T>(
+        result: Result<T>,
+        partial: Partial<T>,
+      ) => T;
+
+      mocks: {
+        /**
+         * Execute a block of code with cofhe mock contracts logging enabled
+         * @param {string} closureName - Name of the code block to log within
+         * @param {() => Promise<void>} closure - The async function to execute
+         */
+        withLogs: (
+          closureName: string,
+          closure: () => Promise<void>,
+        ) => Promise<void>;
+
+        /**
+         * Enable logging from cofhe mock contracts
+         * @param {string} closureName - Optional name of the code block to enable logging for
+         */
+        enableLogs: (closureName?: string) => Promise<void>;
+
+        /**
+         * Disable logging from cofhe mock contracts
+         */
+        disableLogs: () => Promise<void>;
+
+        /**
+         * Deploy the cofhe mock contracts (normally this is done automatically)
+         * @param {DeployMocksArgs} options - Deployment options
+         */
+        deployMocks: (options: DeployMocksArgs) => Promise<void>;
+
+        /**
+         * Get the plaintext value for a ciphertext hash
+         * @param {bigint} ctHash - The ciphertext hash to look up
+         * @returns {Promise<bigint>} The plaintext value
+         */
+        getPlaintext: (ctHash: bigint) => Promise<bigint>;
+
+        /**
+         * Assert that a ciphertext hash represents an expected plaintext value
+         * @param {bigint} ctHash - The ciphertext hash to check
+         * @param {bigint} expectedValue - The expected plaintext value
+         */
+        expectPlaintext: (
+          ctHash: bigint,
+          expectedValue: bigint,
+        ) => Promise<void>;
+      };
+    };
+  }
+}
+
+extendConfig((config) => {
+  config.cofhe = config.cofhe || {};
+});
+
+extendEnvironment((hre) => {
+  hre.cofhe = {
+    initializeWithHardhatSigner: async (
+      signer: HardhatEthersSigner,
+      params?: HHSignerInitializationParams,
+    ) => {
+      return cofhejs_initializeWithHardhatSigner(signer, params);
+    },
+    isPermittedEnvironment: (env: string) => {
+      return isPermittedCofheEnvironment(hre, env);
+    },
+    expectResultSuccess: <T>(result: Result<T>) => {
+      return expectResultSuccess(result);
+    },
+    expectResultError: <T>(result: Result<T>, errorPartial: string) => {
+      return expectResultError(result, errorPartial);
+    },
+    expectResultValue: <T>(result: Result<T>, value: T) => {
+      return expectResultValue(result, value);
+    },
+    expectResultPartialValue: <T>(result: Result<T>, partial: Partial<T>) => {
+      return expectResultPartialValue(result, partial);
+    },
+    mocks: {
+      withLogs: async (closureName: string, closure: () => Promise<void>) => {
+        return mock_withLogs(hre, closureName, closure);
+      },
+      enableLogs: async (closureName?: string) => {
+        return mock_setLoggingEnabled(hre, true, closureName);
+      },
+      disableLogs: async () => {
+        return mock_setLoggingEnabled(hre, false);
+      },
+      deployMocks: async (options: DeployMocksArgs) => {
+        return deployMocks(hre, options);
+      },
+      getPlaintext: async (ctHash: bigint) => {
+        const [signer] = await hre.ethers.getSigners();
+        return mock_getPlaintext(signer.provider, ctHash);
+      },
+      expectPlaintext: async (ctHash: bigint, expectedValue: bigint) => {
+        const [signer] = await hre.ethers.getSigners();
+        return mock_expectPlaintext(signer.provider, ctHash, expectedValue);
+      },
+    },
+  };
+});
