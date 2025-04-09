@@ -8,7 +8,7 @@ import {
   TASK_COFHE_USE_FAUCET,
 } from "./const";
 import { TASK_TEST, TASK_NODE } from "hardhat/builtin-tasks/task-names";
-import { deployMocks } from "./deploy-mocks";
+import { deployMocks, DeployMocksArgs } from "./deploy-mocks";
 import { mock_setLoggingEnabled, mock_withLogs } from "./mock-logs";
 import { mock_expectPlaintext } from "./mockUtils";
 import { mock_getPlaintext } from "./mockUtils";
@@ -144,11 +144,6 @@ task(TASK_COFHE_USE_FAUCET, "Fund an account from the funder")
 
 // DEPLOY TASKS
 
-type DeployMocksArgs = {
-  deployTestBed?: boolean;
-  logMocks?: boolean;
-};
-
 task(
   TASK_COFHE_MOCKS_DEPLOY,
   "Deploys the mock contracts on the Hardhat network",
@@ -160,15 +155,16 @@ task(
     types.boolean,
   )
   .addOptionalParam(
-    "logMocks",
-    "Whether to log mock operations",
-    true,
+    "silent",
+    "Whether to suppress output",
+    false,
     types.boolean,
   )
-  .setAction(async ({ deployTestBed, logMocks }: DeployMocksArgs, hre) => {
+  .setAction(async ({ deployTestBed, silent }: DeployMocksArgs, hre) => {
     await deployMocks(hre, {
       deployTestBed: deployTestBed ?? true,
       gasWarning: hre.config.cofhe.gasWarning ?? true,
+      silent: silent ?? false,
     });
   });
 

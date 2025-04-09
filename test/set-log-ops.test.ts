@@ -6,159 +6,107 @@ import {
   TASK_COFHE_MOCKS_SET_LOG_OPS,
 } from "../src/const";
 import { mock_setLoggingEnabled, mock_withLogs } from "../src/mock-logs";
+import { Contract } from "ethers";
 
 describe("Set Log Ops Task", function () {
-  describe("With logging enabled", function () {
-    useEnvironment("hardhat-logging-enabled");
+  useEnvironment("hardhat");
 
-    it("(task) should disable logging", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: true,
-      });
+  let taskManager: Contract;
 
-      // Verify initial state
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(true);
+  beforeEach(async function () {
+    await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, { silent: true });
 
-      // Disable logging
-      await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
-        enable: false,
-      });
-
-      expect(await taskManager.logOps()).to.equal(false);
-    });
-
-    it("(task) should disable logging with closure name", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: true,
-      });
-
-      // Verify initial state
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(true);
-
-      // Disable logging with closure name
-      await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
-        enable: false,
-        closureName: "testFunction",
-      });
-
-      // Verify logging is disabled
-      expect(await taskManager.logOps()).to.equal(false);
-    });
-
-    it("(function) should disable logging", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: true,
-      });
-
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(true);
-
-      await mock_setLoggingEnabled(this.hre, false);
-
-      expect(await taskManager.logOps()).to.equal(false);
-    });
+    taskManager = await this.hre.ethers.getContractAt(
+      "TaskManager",
+      TASK_MANAGER_ADDRESS,
+    );
   });
 
-  describe("With logging disabled", function () {
-    useEnvironment("hardhat-logging-disabled");
+  const expectLogOps = async (enabled: boolean) => {
+    const logOps = await taskManager.logOps();
+    console.log(`${enabled ? "├ " : ""}(hh-test) Logging Enabled?`, logOps);
+    expect(logOps).to.equal(enabled);
+  };
 
-    it("(function) mock_withLogs should enable logging", async function () {
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: false,
-      });
+  it("(task) should enable logging", async function () {
+    // Verify initial state
+    await expectLogOps(false);
 
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-
-      await mock_withLogs(this.hre, "testFunction", async () => {
-        const logOps = await taskManager.logOps();
-        expect(logOps).to.equal(true);
-      });
+    // Enable logging
+    await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
+      enable: true,
     });
 
-    it("(task) should enable logging", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: false,
-      });
+    expect(await taskManager.logOps()).to.equal(true);
+  });
+  it("(function) should enable logging", async function () {
+    // Verify initial state
+    await expectLogOps(false);
 
-      // Verify initial state
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(false);
+    // Enable logging
+    await this.hre.cofhe.mocks.enableLogs();
 
-      // Enable logging
-      await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
-        enable: true,
-      });
+    await expectLogOps(true);
 
-      // Verify logging is enabled
-      expect(await taskManager.logOps()).to.equal(true);
+    await this.hre.cofhe.mocks.disableLogs();
+
+    // Disable logging (not hre)
+    await mock_setLoggingEnabled(this.hre, false);
+
+    await expectLogOps(false);
+  });
+
+  it("(task) should disable logging", async function () {
+    await this.hre.cofhe.mocks.enableLogs();
+    await expectLogOps(true);
+
+    // Disable logging
+    await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
+      enable: false,
     });
 
-    it("(task) should enable logging with closure name", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: false,
-      });
+    await expectLogOps(false);
+  });
+  it("(function) should disable logging", async function () {
+    await this.hre.cofhe.mocks.enableLogs();
 
-      // Verify initial state
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(false);
+    await expectLogOps(true);
 
-      // Enable logging with closure name
-      await this.hre.run(TASK_COFHE_MOCKS_SET_LOG_OPS, {
-        enable: true,
-        closureName: "testFunction",
-      });
+    // Disable logging
+    await this.hre.cofhe.mocks.disableLogs();
 
-      // Verify logging is enabled
-      expect(await taskManager.logOps()).to.equal(true);
-    });
+    await expectLogOps(false);
 
-    it("(function) should enable logging", async function () {
-      // First deploy mocks to ensure TaskManager exists
-      await this.hre.run(TASK_COFHE_MOCKS_DEPLOY, {
-        deployTestBed: true,
-        logMocks: false,
-      });
+    await this.hre.cofhe.mocks.enableLogs();
 
-      const taskManager = await this.hre.ethers.getContractAt(
-        "TaskManager",
-        TASK_MANAGER_ADDRESS,
-      );
-      expect(await taskManager.logOps()).to.equal(false);
+    // Disable logging (not hre)
+    await mock_setLoggingEnabled(this.hre, false);
 
-      await mock_setLoggingEnabled(this.hre, true);
+    await expectLogOps(false);
+  });
 
-      expect(await taskManager.logOps()).to.equal(true);
-    });
+  it("(function) mock_withLogs should enable logging", async function () {
+    await this.hre.cofhe.mocks.withLogs(
+      "'hre.cofhe.mocks.withLogs' logging enabled?",
+      async () => {
+        // Verify logging is enabled inside the closure
+        await expectLogOps(true);
+      },
+    );
+
+    // Verify logging is disabled outside of the closure
+    await expectLogOps(false);
+
+    await mock_withLogs(
+      this.hre,
+      "'mock_withLogs' logging enabled?",
+      async () => {
+        // Verify logging is enabled inside the closure
+        await expectLogOps(true);
+      },
+    );
+
+    // Verify logging is disabled outside of the closure
+    await expectLogOps(false);
   });
 });
