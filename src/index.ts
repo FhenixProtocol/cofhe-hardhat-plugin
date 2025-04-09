@@ -248,14 +248,20 @@ declare module "hardhat/types/runtime" {
        * @param {Result<T>} result - The Result to check
        * @param {string} errorPartial - The partial error string to match
        */
-      expectResultError: <T>(result: Result<T>, errorPartial: string) => void;
+      expectResultError: <T>(
+        result: Result<T> | Promise<Result<T>>,
+        errorPartial: string,
+      ) => Promise<void>;
 
       /**
        * Assert that a Result type (see cofhejs) contains a specific value
        * @param {Result<T>} result - The Result to check
        * @param {T} value - The inner data of the Result (non null)
        */
-      expectResultValue: <T>(result: Result<T>, value: T) => T;
+      expectResultValue: <T>(
+        result: Result<T> | Promise<Result<T>>,
+        value: T,
+      ) => Promise<T>;
 
       /**
        * Assert that a Result type (see cofhejs) contains a value matching the partial object
@@ -264,9 +270,9 @@ declare module "hardhat/types/runtime" {
        * @returns {T} The inner data of the Result (non null)
        */
       expectResultPartialValue: <T>(
-        result: Result<T>,
+        result: Result<T> | Promise<Result<T>>,
         partial: Partial<T>,
-      ) => T;
+      ) => Promise<T>;
 
       mocks: {
         /**
@@ -361,14 +367,26 @@ extendEnvironment((hre) => {
       const awaitedResult = await result;
       return expectResultSuccess(awaitedResult);
     },
-    expectResultError: <T>(result: Result<T>, errorPartial: string) => {
-      return expectResultError(result, errorPartial);
+    expectResultError: async <T>(
+      result: Result<T> | Promise<Result<T>>,
+      errorPartial: string,
+    ) => {
+      const awaitedResult = await result;
+      return expectResultError(awaitedResult, errorPartial);
     },
-    expectResultValue: <T>(result: Result<T>, value: T) => {
-      return expectResultValue(result, value);
+    expectResultValue: async <T>(
+      result: Result<T> | Promise<Result<T>>,
+      value: T,
+    ) => {
+      const awaitedResult = await result;
+      return expectResultValue(awaitedResult, value);
     },
-    expectResultPartialValue: <T>(result: Result<T>, partial: Partial<T>) => {
-      return expectResultPartialValue(result, partial);
+    expectResultPartialValue: async <T>(
+      result: Result<T> | Promise<Result<T>>,
+      partial: Partial<T>,
+    ) => {
+      const awaitedResult = await result;
+      return expectResultPartialValue(awaitedResult, partial);
     },
     mocks: {
       withLogs: async (closureName: string, closure: () => Promise<void>) => {
