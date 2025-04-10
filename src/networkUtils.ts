@@ -41,7 +41,7 @@ export const isPermittedCofheEnvironment = (
   }
 };
 
-type HHSignerInitializationParams = Omit<
+export type HHSignerInitializationParams = Omit<
   InitializationParams,
   "tfhePublicKeySerializer" | "compactPkeCrsSerializer" | "signer" | "provider"
 > & {

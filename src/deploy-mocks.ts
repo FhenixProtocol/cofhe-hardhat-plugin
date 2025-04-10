@@ -1,4 +1,12 @@
-import { hardhatSetCode } from "./utils";
+import {
+  checkNetworkAndSkip,
+  hardhatSetCode,
+  logDeployment,
+  logEmpty,
+  logError,
+  logSuccess,
+  logWarning,
+} from "./utils";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import {
   TASK_MANAGER_ADDRESS,
@@ -10,46 +18,7 @@ import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
 
-// Logging
-
-const logEmpty = () => {
-  console.log("");
-};
-
-const logSuccess = (message: string, indent = 1) => {
-  console.log(chalk.green(`${"  ".repeat(indent)}✓ ${message}`));
-};
-
-const logWarning = (message: string, indent = 1) => {
-  console.log(
-    chalk.bold(chalk.yellow(`${"  ".repeat(indent)}⚠ NOTE:`)),
-    message,
-  );
-};
-
-const logError = (message: string, indent = 1) => {
-  console.log(chalk.red(`${"  ".repeat(indent)}✗ ${message}`));
-};
-
-const logDeployment = (contractName: string, address: string) => {
-  const paddedName = `${contractName} deployed`.padEnd(36);
-  logSuccess(`${paddedName} ${chalk.bold(address)}`);
-};
-
-// Network Check
-
-const checkNetworkAndSkip = async (hre: HardhatRuntimeEnvironment) => {
-  const network = hre.network.name;
-  const isHardhat = network === "hardhat";
-  if (!isHardhat)
-    logSuccess(
-      `cofhe-hardhat-plugin - deploy mocks - skipped on non-hardhat network ${network}`,
-      0,
-    );
-  return isHardhat;
-};
-
-// Deployments
+// Deploy
 
 const deployMockTaskManager = async (hre: HardhatRuntimeEnvironment) => {
   const [signer] = await hre.ethers.getSigners();
@@ -168,79 +137,92 @@ const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
   await setAclTx.wait();
 };
 
-const setTaskManagerLogOps = async (taskManager: Contract, logOps: boolean) => {
-  const setLogOpsTx = await taskManager.setLogOps(logOps);
-  await setLogOpsTx.wait();
+export type DeployMocksArgs = {
+  deployTestBed?: boolean;
+  gasWarning?: boolean;
+  silent?: boolean;
 };
 
 export const deployMocks = async (
   hre: HardhatRuntimeEnvironment,
-  options: {
-    deployTestBed?: boolean;
-    logOps?: boolean;
-    gasWarning?: boolean;
-  } = {
+  options: DeployMocksArgs = {
     deployTestBed: true,
-    logOps: true,
     gasWarning: true,
+    silent: false,
   },
 ) => {
   // Check if network is Hardhat, if not log skip message and return
   const isHardhat = await checkNetworkAndSkip(hre);
   if (!isHardhat) return;
 
+  const logEmptyIfNoisy = () => {
+    if (!options.silent) {
+      logEmpty();
+    }
+  };
+  const logSuccessIfNoisy = (message: string, indent = 0) => {
+    if (!options.silent) {
+      logSuccess(message, indent);
+    }
+  };
+  const logDeploymentIfNoisy = (contractName: string, address: string) => {
+    if (!options.silent) {
+      logDeployment(contractName, address);
+    }
+  };
+  const logWarningIfNoisy = (message: string, indent = 0) => {
+    if (!options.silent) {
+      logWarning(message, indent);
+    }
+  };
+
   // Log start message
-  logEmpty();
-  logSuccess(chalk.bold("cofhe-hardhat-plugin - deploy mocks"), 0);
-  logEmpty();
+  logEmptyIfNoisy();
+  logSuccessIfNoisy(chalk.bold("cofhe-hardhat-plugin :: deploy mocks"), 0);
+  logEmptyIfNoisy();
 
   // Compile mock contracts
   await compileMockContractPaths(hre);
-  logEmpty();
-  logSuccess("Mock contracts compiled", 1);
+  logEmptyIfNoisy();
+  logSuccessIfNoisy("Mock contracts compiled", 1);
 
   // Deploy mock contracts
   const taskManager = await deployMockTaskManager(hre);
-  logDeployment("MockTaskManager", await taskManager.getAddress());
-
-  if (options.logOps) {
-    await setTaskManagerLogOps(taskManager, true);
-    logSuccess("TaskManager logOps set", 2);
-  }
+  logDeploymentIfNoisy("MockTaskManager", await taskManager.getAddress());
 
   const acl = await deployMockACL(hre);
-  logDeployment("MockACL", await acl.getAddress());
+  logDeploymentIfNoisy("MockACL", await acl.getAddress());
 
   await setTaskManagerACL(taskManager, acl);
-  logSuccess("ACL address set in TaskManager", 2);
+  logSuccessIfNoisy("ACL address set in TaskManager", 2);
 
   const zkVerifier = await deployMockZkVerifier(hre);
-  logDeployment("MockZkVerifier", await zkVerifier.getAddress());
+  logDeploymentIfNoisy("MockZkVerifier", await zkVerifier.getAddress());
 
   const queryDecrypter = await deployMockQueryDecrypter(hre, acl);
-  logDeployment("MockQueryDecrypter", await queryDecrypter.getAddress());
+  logDeploymentIfNoisy("MockQueryDecrypter", await queryDecrypter.getAddress());
 
   if (options.deployTestBed) {
-    logSuccess("TestBed deployment enabled", 2);
+    logSuccessIfNoisy("TestBed deployment enabled", 2);
     const testBed = await deployTestBedContract(hre);
-    logDeployment("TestBed", await testBed.getAddress());
+    logDeploymentIfNoisy("TestBed", await testBed.getAddress());
   }
 
   // Log success message
-  logEmpty();
-  logSuccess(
+  logEmptyIfNoisy();
+  logSuccessIfNoisy(
     chalk.bold("cofhe-hardhat-plugin :: mocks deployed successfully"),
     0,
   );
 
   // Log warning about mocks increased gas costs
   if (options.gasWarning) {
-    logEmpty();
-    logWarning(
+    logEmptyIfNoisy();
+    logWarningIfNoisy(
       "When using mocks, FHE operations (eg FHE.add / FHE.mul) report a higher gas price due to additional on-chain mocking logic. Deploy your contracts on a testnet chain to check the true gas costs.\n(Disable this warning by setting 'cofhejs.gasWarning' to false in your hardhat config",
       0,
     );
   }
 
-  logEmpty();
+  logEmptyIfNoisy();
 };
