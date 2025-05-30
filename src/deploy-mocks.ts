@@ -130,6 +130,19 @@ const deployTestBedContract = async (hre: HardhatRuntimeEnvironment) => {
   return testBed;
 };
 
+// Funding
+
+const ZK_VERIFIER_SIGNER_ADDRESS = "0x6E12D8C87503D4287c294f2Fdef96ACd9DFf6bd2";
+const fundZkVerifierSigner = async (hre: HardhatRuntimeEnvironment) => {
+  const zkVerifierSigner = await hre.ethers.getSigner(
+    ZK_VERIFIER_SIGNER_ADDRESS,
+  );
+  await hre.network.provider.send("hardhat_setBalance", [
+    zkVerifierSigner.address,
+    "0x" + hre.ethers.parseEther("10").toString(16),
+  ]);
+};
+
 // Initializations
 
 const setTaskManagerACL = async (taskManager: Contract, acl: Contract) => {
@@ -195,6 +208,17 @@ export const deployMocks = async (
 
   await setTaskManagerACL(taskManager, acl);
   logSuccessIfNoisy("ACL address set in TaskManager", 2);
+
+  await fundZkVerifierSigner(hre);
+  logSuccessIfNoisy(
+    `ZkVerifier signer (${ZK_VERIFIER_SIGNER_ADDRESS}) funded`,
+    1,
+  );
+
+  const zkVerifierSignerBalance = await hre.ethers.provider.getBalance(
+    ZK_VERIFIER_SIGNER_ADDRESS,
+  );
+  logSuccessIfNoisy(`ETH balance: ${zkVerifierSignerBalance.toString()}`, 2);
 
   const zkVerifier = await deployMockZkVerifier(hre);
   logDeploymentIfNoisy("MockZkVerifier", await zkVerifier.getAddress());
