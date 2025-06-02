@@ -8,6 +8,7 @@ import {
   InitializationParams,
 } from "cofhejs/node";
 import { TypedDataField } from "ethers";
+import { MOCK_ZK_VERIFIER_SIGNER_ADDRESS } from "./const";
 
 export const getCofheEnvironmentFromNetwork = (
   network: string,
@@ -16,6 +17,7 @@ export const getCofheEnvironmentFromNetwork = (
     case "localcofhe":
       return "LOCAL";
     case "hardhat":
+    case "localhost":
       return "MOCK";
     case "arb-sepolia":
     case "eth-sepolia":
@@ -33,7 +35,7 @@ export const isPermittedCofheEnvironment = (
     case "LOCAL":
       return ["localcofhe"].includes(hre.network.name);
     case "MOCK":
-      return ["hardhat"].includes(hre.network.name);
+      return ["hardhat", "localhost"].includes(hre.network.name);
     case "TESTNET":
       return ["arb-sepolia", "eth-sepolia"].includes(hre.network.name);
     default:
@@ -49,11 +51,10 @@ export type HHSignerInitializationParams = Omit<
   environment?: Environment;
 };
 
-export const cofhejs_initializeWithHardhatSigner = async (
+const hhSignerToCofhejsProvider = (
   signer: HardhatEthersSigner,
-  params?: HHSignerInitializationParams,
-) => {
-  const abstractProvider: AbstractProvider = {
+): AbstractProvider => {
+  const provider: AbstractProvider = {
     call: async (...args) => {
       try {
         return signer.provider.call(...args);
@@ -71,6 +72,13 @@ export const cofhejs_initializeWithHardhatSigner = async (
       }
     },
   };
+  return provider;
+};
+
+const hhSignerToCofhejsSigner = (
+  signer: HardhatEthersSigner,
+  provider: AbstractProvider,
+): AbstractSigner => {
   const abstractSigner: AbstractSigner = {
     signTypedData: async (domain, types, value) =>
       signer.signTypedData(
@@ -79,7 +87,7 @@ export const cofhejs_initializeWithHardhatSigner = async (
         value,
       ),
     getAddress: async () => signer.getAddress(),
-    provider: abstractProvider,
+    provider,
     sendTransaction: async (...args) => {
       try {
         const tx = await signer.sendTransaction(...args);
@@ -91,6 +99,21 @@ export const cofhejs_initializeWithHardhatSigner = async (
       }
     },
   };
+  return abstractSigner;
+};
+
+export const cofhejs_initializeWithHardhatSigner = async (
+  hre: HardhatRuntimeEnvironment,
+  signer: HardhatEthersSigner,
+  params?: HHSignerInitializationParams,
+) => {
+  const abstractProvider = hhSignerToCofhejsProvider(signer);
+  const abstractSigner = hhSignerToCofhejsSigner(signer, abstractProvider);
+
+  const zkvHhSigner = await hre.ethers.getImpersonatedSigner(
+    MOCK_ZK_VERIFIER_SIGNER_ADDRESS,
+  );
+  const zkvSigner = hhSignerToCofhejsSigner(zkvHhSigner, abstractProvider);
 
   return cofhejs.initialize({
     ...(params ?? {}),
@@ -99,5 +122,6 @@ export const cofhejs_initializeWithHardhatSigner = async (
       getCofheEnvironmentFromNetwork((await signer.provider.getNetwork()).name),
     provider: abstractProvider,
     signer: abstractSigner,
+    zkvSigner,
   });
 };

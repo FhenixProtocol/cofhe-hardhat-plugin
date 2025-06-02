@@ -354,7 +354,7 @@ extendEnvironment((hre) => {
       signer: HardhatEthersSigner,
       params?: HHSignerInitializationParams,
     ) => {
-      return cofhejs_initializeWithHardhatSigner(signer, params);
+      return cofhejs_initializeWithHardhatSigner(hre, signer, params);
     },
     isPermittedEnvironment: (env: string) => {
       return isPermittedCofheEnvironment(hre, env);
