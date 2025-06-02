@@ -17,6 +17,7 @@ import {
 import { Contract } from "ethers";
 import { compileMockContractPaths } from "./compile-mock-contracts";
 import chalk from "chalk";
+import { MOCK_ZK_VERIFIER_SIGNER_ADDRESS } from "./const";
 
 // Deploy
 
@@ -132,10 +133,9 @@ const deployTestBedContract = async (hre: HardhatRuntimeEnvironment) => {
 
 // Funding
 
-const ZK_VERIFIER_SIGNER_ADDRESS = "0x6E12D8C87503D4287c294f2Fdef96ACd9DFf6bd2";
 const fundZkVerifierSigner = async (hre: HardhatRuntimeEnvironment) => {
   const zkVerifierSigner = await hre.ethers.getSigner(
-    ZK_VERIFIER_SIGNER_ADDRESS,
+    MOCK_ZK_VERIFIER_SIGNER_ADDRESS,
   );
   await hre.network.provider.send("hardhat_setBalance", [
     zkVerifierSigner.address,
@@ -211,12 +211,12 @@ export const deployMocks = async (
 
   await fundZkVerifierSigner(hre);
   logSuccessIfNoisy(
-    `ZkVerifier signer (${ZK_VERIFIER_SIGNER_ADDRESS}) funded`,
+    `ZkVerifier signer (${MOCK_ZK_VERIFIER_SIGNER_ADDRESS}) funded`,
     1,
   );
 
   const zkVerifierSignerBalance = await hre.ethers.provider.getBalance(
-    ZK_VERIFIER_SIGNER_ADDRESS,
+    MOCK_ZK_VERIFIER_SIGNER_ADDRESS,
   );
   logSuccessIfNoisy(`ETH balance: ${zkVerifierSignerBalance.toString()}`, 2);
 
