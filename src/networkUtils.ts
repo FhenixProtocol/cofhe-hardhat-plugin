@@ -45,7 +45,11 @@ export const isPermittedCofheEnvironment = (
 
 export type HHSignerInitializationParams = Omit<
   InitializationParams,
-  "tfhePublicKeySerializer" | "compactPkeCrsSerializer" | "signer" | "provider"
+  | "tfhePublicKeySerializer"
+  | "compactPkeCrsSerializer"
+  | "signer"
+  | "provider"
+  | "mockConfig"
 > & {
   generatePermit?: boolean;
   environment?: Environment;
@@ -122,6 +126,8 @@ export const cofhejs_initializeWithHardhatSigner = async (
       getCofheEnvironmentFromNetwork((await signer.provider.getNetwork()).name),
     provider: abstractProvider,
     signer: abstractSigner,
-    zkvSigner,
+    mockConfig: {
+      zkvSigner,
+    },
   });
 };

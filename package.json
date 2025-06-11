@@ -41,7 +41,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "chai": "^4.2.0",
-    "cofhejs": "^0.2.1-alpha.2",
+    "cofhejs": "^0.2.1-alpha.4",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
@@ -63,7 +63,7 @@
     "fast-glob": "^3.3.2"
   },
   "peerDependencies": {
-    "cofhejs": "^0.2.1-alpha.2",
+    "cofhejs": "^0.2.1-alpha.4",
     "hardhat": "^2.11.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "ethers": "^6.10.0"
