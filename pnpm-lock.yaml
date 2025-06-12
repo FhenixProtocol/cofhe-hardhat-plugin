@@ -12,8 +12,8 @@ importers:
         specifier: 0.0.13
         version: 0.0.13
       '@fhenixprotocol/cofhe-mock-contracts':
-        specifier: ^0.2.1-alpha.4
-        version: 0.2.1-alpha.4(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)
+        specifier: ^0.3.0
+        version: 0.3.0(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)
       '@openzeppelin/contracts':
         specifier: ^5.0.0
         version: 5.2.0
@@ -67,8 +67,8 @@ importers:
         specifier: ^4.2.0
         version: 4.3.10
       cofhejs:
-        specifier: ^0.2.1-alpha.4
-        version: 0.2.1-alpha.4
+        specifier: ^0.3.0
+        version: 0.3.0
       eslint:
         specifier: ^8.26.0
         version: 8.57.1
@@ -184,8 +184,8 @@ packages:
   '@fhenixprotocol/cofhe-contracts@0.0.13':
     resolution: {integrity: sha512-+lHo5v52fR7QfQj2ottDw4F/AqZg6obPBRqvK576SJatX3o4aH6ZSt2kxNb5kT8Ckthjw6FoNmLdUVCDpP400w==}
 
-  '@fhenixprotocol/cofhe-mock-contracts@0.2.1-alpha.4':
-    resolution: {integrity: sha512-G4q0JsV7x8Pgz3XTZj3KqrH/FEdd0vS77JUIusSzF+irvJZkmqpPmrXoTd8z+xhpkbbffoG29qFcYq8S/ur+5Q==}
+  '@fhenixprotocol/cofhe-mock-contracts@0.3.0':
+    resolution: {integrity: sha512-1XJDr+MW1zyNdcGgGTgXExC/jlQjuE1HK3Afq7VUOz+WYh/CAGXmOYv7eJeBB7YgsEcxg6VT/vnf6XE6KKwMtw==}
     peerDependencies:
       '@fhenixprotocol/cofhe-contracts': 0.0.13
       '@openzeppelin/contracts': ^5.0.0
@@ -704,8 +704,8 @@ packages:
   cliui@7.0.4:
     resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
 
-  cofhejs@0.2.1-alpha.4:
-    resolution: {integrity: sha512-UiIV6DUIEqFV8yXrWDDBk+Uws9EyfwXop95ZMoe/EZFHHc/djVmy3syWMpXbh+rc3YSiKBkGh1QTGR5Z0yFvKg==}
+  cofhejs@0.3.0:
+    resolution: {integrity: sha512-6thwMibou2a3l1cMPOqmqPulWwjKLBN2vfp3P/44vHH7bjg5GEg4+pFI1CHr4VCHMD8dBtV2Kg+rMXFK1g4L8A==}
     engines: {node: '>=20.0.0'}
 
   color-convert@2.0.1:
@@ -1867,7 +1867,7 @@ snapshots:
     dependencies:
       '@openzeppelin/contracts': 5.2.0
 
-  '@fhenixprotocol/cofhe-mock-contracts@0.2.1-alpha.4(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)':
+  '@fhenixprotocol/cofhe-mock-contracts@0.3.0(@fhenixprotocol/cofhe-contracts@0.0.13)(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.2.0))(@openzeppelin/contracts@5.2.0)':
     dependencies:
       '@fhenixprotocol/cofhe-contracts': 0.0.13
       '@openzeppelin/contracts': 5.2.0
@@ -2438,7 +2438,7 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cofhejs@0.2.1-alpha.4:
+  cofhejs@0.3.0:
     dependencies:
       '@types/node': 20.17.28
       idb-keyval: 6.2.1
